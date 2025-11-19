@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1062746634916",
+    "project_id": "my-app-90810",
+    "storage_bucket": "my-app-90810.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062746634916:android:54dc1bb13b8be29dfe0431",
+        "android_client_info": {
+          "package_name": "com.example.grandustionapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-hNecPVPv1IBwCMrPc7gNUcFKeaDyZ_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

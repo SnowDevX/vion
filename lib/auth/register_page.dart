@@ -102,7 +102,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
 
                   const SizedBox(height: 20),
-                  // في صفحة التسجيل
                   //UserName
                   CustomTextField(
                     controller: nameController,
@@ -110,14 +109,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     onSaved: (val) => Myusername = val,
                     validator: (val) =>
                         val == null || val.isEmpty ? "الاسم مطلوب" : null,
-                    // لا تحتاج keyboardType هنا - ستستخدم القيمة الافتراضية TextInputType.text
                   ),
 
                   //Email
                   CustomTextField(
                     controller: emailController,
                     label: "البريد الإلكتروني",
-                    keyboardType: TextInputType.emailAddress, // هنا تحتاجه
+                    keyboardType: TextInputType.emailAddress, 
                     onSaved: (val) => Myemail = val,
                     validator: CustomTextField.emailValidator,
                   ),
@@ -129,7 +127,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscure: true,
                     onSaved: (val) => Mypassword = val,
                     validator: CustomTextField.passwordValidator,
-                    // يمكنك إضافة keyboardType إذا أردت
                     keyboardType: TextInputType.visiblePassword,
                   ),
 
@@ -147,7 +144,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
                       return null;
                     },
-                    // يمكنك إضافة keyboardType إذا أردت
                     keyboardType: TextInputType.visiblePassword,
                   ),
 

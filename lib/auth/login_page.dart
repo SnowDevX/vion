@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                     label: "البريد الإلكتروني أو اسم المستخدم",
                     onSaved: (val) => Myemail = val,
                     keyboardType:
-                        TextInputType.emailAddress, // أضف هذا إذا أردت
+                        TextInputType.emailAddress, 
                     validator: (val) {
                       if (val == null || val.isEmpty) return "البريد مطلوب";
                       if (!val.contains("@") || !val.contains(".")) {
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                     obscure: true,
                     onSaved: (val) => Mypassword = val,
                     keyboardType:
-                        TextInputType.visiblePassword, // أضف هذا إذا أردت
+                        TextInputType.visiblePassword, 
                     validator: (val) {
                       if (val == null || val.isEmpty) {
                         return "كلمة المرور مطلوبة";

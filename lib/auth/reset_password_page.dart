@@ -117,11 +117,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                   const SizedBox(height: 30),
 
-                  // في صفحة إعادة تعيين كلمة المرور (الريسيت)
+                  // reset email field
                   CustomTextField(
                     controller: emailController,
                     label: "البريد الإلكتروني",
-                    keyboardType: TextInputType.emailAddress, // أضف هذا
+                    keyboardType: TextInputType.emailAddress, 
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'الرجاء إدخال البريد الإلكتروني';
@@ -135,7 +135,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                   const SizedBox(height: 24),
 
-                  // زر إرسال رابط إعادة التعيين
+                  // reset password button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -168,7 +168,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                   const SizedBox(height: 20),
 
-                  // زر العودة لتسجيل الدخول
+                  // back to login button
                   TextButton(
                     onPressed: _isLoading
                         ? null

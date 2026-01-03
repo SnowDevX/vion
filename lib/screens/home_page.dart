@@ -1,54 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:grandustionapp/screens/account_page.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'activity_page.dart';
+import 'rewards_page.dart';
+import 'package:grandustionapp/generated/l10n.dart'; // استخدم هذا الاستيراد
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final double steps = 7848;
     final double goal = 10000;
     final double percent = steps / goal;
+    final lang = S.of(context)!; 
+    final isRTL = Localizations.localeOf(context).languageCode == 'ar';
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F1A17),
-
-      bottomNavigationBar: _buildBottomNavBar(),
-
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildConnectionStatus(),
-              const SizedBox(height: 40),
-              _buildProgressCircle(context, percent, steps),
-              const SizedBox(height: 16),
-              _buildGoalPercentText(percent),
-              const SizedBox(height: 40),
-              _buildEnergyPointsSection(),
-              const SizedBox(height: 30),
-              _buildButtons(),
-              const SizedBox(height: 30),
-              _buildAchievementBox(percent),
-            ],
+    return Directionality(
+      textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0F1A17),
+        bottomNavigationBar: _buildBottomNavBar(context),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildConnectionStatus(lang),
+                const SizedBox(height: 40),
+                _buildProgressCircle(context, percent, steps, lang),
+                const SizedBox(height: 16),
+                _buildGoalPercentText(percent, lang),
+                const SizedBox(height: 40),
+                _buildEnergyPointsSection(lang),
+                const SizedBox(height: 30),
+                _buildButtons(lang),
+                const SizedBox(height: 30),
+                _buildAchievementBox(percent, lang),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  //==============================================================
-  // 	عناصر الصفحة
-  //==============================================================
-
-  // 	مربع الحالة
-  Widget _buildConnectionStatus() {
+  Widget _buildConnectionStatus(S lang) {
+    final isRTL = Localizations.localeOf(context).languageCode == 'ar';
+    
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
         child: Row(
           children: [
             Container(
@@ -60,9 +71,9 @@ class HomePage extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Text(
-                    "مُتَّصِل",
-                    style: TextStyle(
+                  Text(
+                    lang.connected,
+                    style: const TextStyle(
                       color: Colors.tealAccent,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -79,16 +90,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // دائرة التقدم
-  Widget _buildProgressCircle(
-    BuildContext context,
-    double percent,
-    double steps,
-  ) {
+  Widget _buildProgressCircle(BuildContext context, double percent, double steps, S lang) {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // 	الظل الخارجي
         Container(
           width: MediaQuery.of(context).size.width * 0.72,
           height: MediaQuery.of(context).size.width * 0.72,
@@ -96,30 +101,24 @@ class HomePage extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                // تم إصلاح هذا الجزء: تم استبدال withOpacity(0.4) بحساب قيمة الشفافية (102) مباشرةً
                 color: const Color.fromARGB(102, 2, 61, 49),
-                blurRadius: 23, // مدى انتشار اللمعة
-                spreadRadius: 6, // مدى توسّعها
+                blurRadius: 23,
+                spreadRadius: 6,
               ),
             ],
           ),
         ),
-
-        // 	الدائرة
         CircularPercentIndicator(
           radius: MediaQuery.of(context).size.width * 0.35,
           lineWidth: 16,
           percent: percent.clamp(0.0, 1.0),
           circularStrokeCap: CircularStrokeCap.round,
           backgroundColor: Colors.grey.withOpacity(0.25),
-
           linearGradient: const LinearGradient(
             colors: [Color(0xFF00FF73), Color(0xFF01FDCB), Color(0xFF01ECF0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-
-          // 	محتوى المركز
           center: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -139,13 +138,13 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                "خطوات",
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+              Text(
+                lang.steps,
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 6),
               Text(
-                percent >= 1.0 ? " تهانينا! الهدف مكتمل" : "تابع المشي ",
+                percent >= 1.0 ? lang.congratulationsGoalComplete : lang.keepWalking,
                 style: const TextStyle(
                   color: Colors.tealAccent,
                   fontSize: 12,
@@ -159,8 +158,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 	نسبة الإنجاز
-  Widget _buildGoalPercentText(double percent) {
+  Widget _buildGoalPercentText(double percent, S lang) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -168,7 +166,7 @@ class HomePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        "${(percent * 100).toStringAsFixed(0)}% من الهدف",
+        "${(percent * 100).toStringAsFixed(0)}% ${lang.ofGoal}",
         style: const TextStyle(
           color: Colors.tealAccent,
           fontSize: 14,
@@ -178,8 +176,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 	نقاط الطاقة
-  Widget _buildEnergyPointsSection() {
+  Widget _buildEnergyPointsSection(S lang) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -195,16 +192,15 @@ class HomePage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildConversionRate(),
+          _buildConversionRate(lang),
           const SizedBox(height: 16),
-          _buildPointsBalance(),
+          _buildPointsBalance(lang),
         ],
       ),
     );
   }
 
-  // 	معدل التحويل
-  Widget _buildConversionRate() {
+  Widget _buildConversionRate(S lang) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -215,12 +211,12 @@ class HomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "معدل التحويل",
+            lang.conversionRate,
             style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
           ),
-          const Text(
-            "نقطة 1/100 = خطوة",
-            style: TextStyle(
+          Text(
+            lang.conversionFormula,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -231,8 +227,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 	رصيد النقاط
-  Widget _buildPointsBalance() {
+  Widget _buildPointsBalance(S lang) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
@@ -247,7 +242,7 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "رصيد نقاط الطاقة",
+                lang.energyPointsBalance,
                 style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
               ),
               const SizedBox(height: 8),
@@ -255,9 +250,9 @@ class HomePage extends StatelessWidget {
                 children: [
                   const Icon(Icons.bolt, color: Colors.tealAccent, size: 20),
                   const SizedBox(width: 8),
-                  const Text(
-                    "156 نقطة ✓",
-                    style: TextStyle(
+                  Text(
+                    lang.pointsCount,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -267,7 +262,6 @@ class HomePage extends StatelessWidget {
               ),
             ],
           ),
-          // الأيقونة
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -285,8 +279,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // الأزرار (اشحن الآن / سجل نشاطي)
-  Widget _buildButtons() {
+  Widget _buildButtons(S lang) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -304,9 +297,9 @@ class HomePage extends StatelessWidget {
                 elevation: 3,
               ),
               onPressed: () {},
-              child: const Text(
-                "اشحن الآن",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              child: Text(
+                lang.chargeNow,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),
@@ -324,9 +317,9 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               onPressed: () {},
-              child: const Text(
-                "سجل نشاطي",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              child: Text(
+                lang.logActivity,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
             ),
           ),
@@ -335,8 +328,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // مربع الإنجاز
-  Widget _buildAchievementBox(double percent) {
+  Widget _buildAchievementBox(double percent, S lang) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -350,7 +342,7 @@ class HomePage extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              "رائع! لقد قطعت ${(percent * 100).toStringAsFixed(0)}% من هدفك اليومي",
+              "${lang.great} ${(percent * 100).toStringAsFixed(0)}% ${lang.ofYourDailyGoal}", // حل بديل
               style: const TextStyle(
                 color: Colors.tealAccent,
                 fontSize: 14,
@@ -363,8 +355,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 	الشريط السفلي
-  Widget _buildBottomNavBar() {
+//الجزء الخاص بشريط التنقل السفلي
+  Widget _buildBottomNavBar(BuildContext context) {
+    final lang = S.of(context)!;
+    
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xFF0F1A17),
@@ -376,11 +370,46 @@ class HomePage extends StatelessWidget {
         selectedItemColor: Colors.tealAccent,
         unselectedItemColor: Colors.grey,
         elevation: 0,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.flash_on), label: 'النشاط'),
-          BottomNavigationBarItem(icon: Icon(Icons.public), label: 'المكافآت'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ActivityPage()),
+            );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => RewardsPage()),
+            );
+          } else if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AccountPage()),
+            );
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home), 
+            label: lang.home,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.flash_on), 
+            label: lang.activity,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.public), 
+            label: lang.rewards,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person), 
+            label: lang.myAccount,
+          ),
         ],
       ),
     );

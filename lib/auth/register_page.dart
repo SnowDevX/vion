@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grandustionapp/components/custom_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grandustionapp/generated/l10n.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -43,18 +44,18 @@ class _RegisterPageState extends State<RegisterPage> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
-              'uid': userCredential.user!.uid,
-              'name': Myusername,
-              'email': Myemail.trim(),
-              'createdAt': FieldValue.serverTimestamp(),
-            });
+          'uid': userCredential.user!.uid,
+          'name': Myusername,
+          'email': Myemail.trim(),
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
         if (mounted) Navigator.pop(context);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم إنشاء الحساب بنجاح!'),
+            SnackBar(
+              content: Text(S.of(context)!.accountCreatedSuccess), 
               backgroundColor: Colors.green,
             ),
           );
@@ -68,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.message ?? 'حدث خطأ'),
+            content: Text(e.message ?? S.of(context)!.errorOccurred), 
             backgroundColor: Colors.red,
           ),
         );
@@ -78,96 +79,116 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F1A17),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 40),
-                  Image.asset("assets/logo/logo.png", width: 120),
-                  const SizedBox(height: 30),
+    final lang = S.of(context)!; 
+    final isRTL = Localizations.localeOf(context).languageCode == 'ar'; 
 
-                  const Text(
-                    "انضم إلى VION",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+    return Directionality( // أضف هذا الـ Directionality
+      textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0F1A17),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    Image.asset("assets/logo/logo.png", width: 120),
+                    const SizedBox(height: 30),
+
+                    Text(
+                      lang.joinVion, 
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
-                  //UserName
-                  CustomTextField(
-                    controller: nameController,
-                    label: "الاسم",
-                    onSaved: (val) => Myusername = val,
-                    validator: (val) =>
-                        val == null || val.isEmpty ? "الاسم مطلوب" : null,
-                  ),
+                    const SizedBox(height: 20),
+                    // UserName
+                    CustomTextField(
+                      controller: nameController,
+                      label: lang.name, 
+                      onSaved: (val) => Myusername = val,
+                      validator: (val) =>
+                          val == null || val.isEmpty ? lang.nameRequired : null, 
+                    ),
 
-                  //Email
-                  CustomTextField(
-                    controller: emailController,
-                    label: "البريد الإلكتروني",
-                    keyboardType: TextInputType.emailAddress, 
-                    onSaved: (val) => Myemail = val,
-                    validator: CustomTextField.emailValidator,
-                  ),
+                    // Email
+                    CustomTextField(
+                      controller: emailController,
+                      label: lang.email, 
+                      keyboardType: TextInputType.emailAddress,
+                      onSaved: (val) => Myemail = val,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) return lang.emailRequired;
+                        if (!val.contains("@") || !val.contains(".")) {
+                          return lang.enterValidEmail;
+                        }
+                        return null;
+                      },
+                    ),
 
-                  //Password
-                  CustomTextField(
-                    controller: passController,
-                    label: "كلمة المرور",
-                    obscure: true,
-                    onSaved: (val) => Mypassword = val,
-                    validator: CustomTextField.passwordValidator,
-                    keyboardType: TextInputType.visiblePassword,
-                  ),
+                    // Password
+                    CustomTextField(
+                      controller: passController,
+                      label: lang.password, 
+                      obscure: true,
+                      onSaved: (val) => Mypassword = val,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return lang.passwordRequired;
+                        }
+                        if (val.length < 6) {
+                          return lang.passwordMinLength;
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.visiblePassword,
+                    ),
 
-                  //Confirm Password
-                  CustomTextField(
-                    controller: confirmController,
-                    label: "تأكيد كلمة المرور",
-                    obscure: true,
-                    validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return "تأكيد كلمة المرور مطلوب";
-                      }
-                      if (val != passController.text) {
-                        return "كلمة المرور غير متطابقة";
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.visiblePassword,
-                  ),
+                    // Confirm Password
+                    CustomTextField(
+                      controller: confirmController,
+                      label: lang.confirmPassword, 
+                      obscure: true,
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return lang.confirmPasswordRequired; 
+                        }
+                        if (val != passController.text) {
+                          return lang.passwordsNotMatch; 
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.visiblePassword,
+                    ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // Register Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF44C37F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    // Register Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF44C37F),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: _registerUser,
+                        child: Text(
+                          lang.createAccount, 
+                          style: const TextStyle(fontSize: 18, color: Colors.black),
                         ),
                       ),
-                      onPressed: _registerUser,
-                      child: const Text(
-                        "إنهاء الحساب",
-                        style: TextStyle(fontSize: 18, color: Colors.black),
-                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

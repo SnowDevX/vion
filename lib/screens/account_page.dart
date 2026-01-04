@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:grandustionapp/generated/l10n.dart';
-import 'package:grandustionapp/providers/language_provider.dart'; 
-import 'package:provider/provider.dart'; 
+import 'package:grandustionapp/providers/language_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -12,13 +14,290 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   // بيانات المستخدم
-  final TextEditingController _nameController = TextEditingController(text: "ادخل اسمك");
-  final TextEditingController _emailController = TextEditingController(text: "example@email.com");
-  final TextEditingController _heightController = TextEditingController(text: "176");
-  final TextEditingController _weightController = TextEditingController(text: "82");
-  final TextEditingController _stepsGoalController = TextEditingController(text: "10000");
-  
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _stepsGoalController = TextEditingController();
+
   bool _notificationsEnabled = true;
+  bool _isLoading = true;
+  User? _currentUser;
+  Map<String, dynamic>? _userData;
+
+  @override
+  void initState() {
+    super.initState();
+    // تأخير تحميل البيانات حتى تكتمل بناء الواجهة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserData();
+    });
+  }
+
+  // دالة لتحميل بيانات المستخدم من Firebase
+  Future<void> _loadUserData() async {
+    if (!mounted) return;
+    
+    setState(() {
+      _isLoading = true;
+    });
+
+    print("=== بدء تحميل بيانات المستخدم ===");
+
+    try {
+      // 1. الحصول على مستخدم Firebase الحالي
+      _currentUser = FirebaseAuth.instance.currentUser;
+      
+      if (_currentUser != null) {
+        print("👤 UID: ${_currentUser!.uid}");
+        print("📧 Email من Auth: ${_currentUser!.email}");
+        print("🏷️ DisplayName من Auth: ${_currentUser!.displayName}");
+
+        // 2. جلب البيانات من Firestore (الأولوية)
+        print("🔄 جلب البيانات من Firestore...");
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_currentUser!.uid)
+            .get();
+
+        if (userDoc.exists && userDoc.data() != null) {
+          _userData = userDoc.data() as Map<String, dynamic>;
+          
+          print("✅ وجدت بيانات في Firestore:");
+          print("   📝 الاسم: ${_userData!['name']}");
+          print("   📧 الإيميل: ${_userData!['email']}");
+          print("   📏 الطول: ${_userData!['height']}");
+          print("   ⚖️ الوزن: ${_userData!['weight']}");
+          
+          // ⭐⭐ تعبئة البيانات في الـ Controllers
+          // الاسم من Firestore أولاً
+          _nameController.text = _userData!['name']?.toString() ?? "ادخل اسمك";
+          
+          // الإيميل من Firestore أو من Auth
+          _emailController.text = _userData!['email']?.toString() ?? 
+                                 _currentUser!.email ?? 
+                                 "example@email.com";
+          
+          // البيانات الأخرى
+          _heightController.text = _userData!['height']?.toString() ?? "176";
+          _weightController.text = _userData!['weight']?.toString() ?? "82";
+          _stepsGoalController.text = _userData!['dailyStepsGoal']?.toString() ?? "10000";
+          _notificationsEnabled = _userData!['notifications'] ?? true;
+          
+          print("✅✅✅ تم تعيين البيانات:");
+          print("   الاسم: ${_nameController.text}");
+          print("   الإيميل: ${_emailController.text}");
+          
+        } else {
+          print("⚠️ لا يوجد بيانات في Firestore، استخدام البيانات الافتراضية");
+          _nameController.text = _currentUser!.displayName ?? "زائر";
+          _emailController.text = _currentUser!.email ?? "غير مسجل";
+          _heightController.text = "176";
+          _weightController.text = "82";
+          _stepsGoalController.text = "10000";
+        }
+        
+      } else {
+        print("❌ لا يوجد مستخدم مسجل دخول");
+        _nameController.text = "زائر";
+        _emailController.text = "غير مسجل";
+        _heightController.text = "176";
+        _weightController.text = "82";
+        _stepsGoalController.text = "10000";
+      }
+      
+    } catch (e) {
+      print("❌ خطأ في تحميل البيانات: $e");
+      _nameController.text = "حدث خطأ";
+      _emailController.text = "error@example.com";
+      _heightController.text = "176";
+      _weightController.text = "82";
+      _stepsGoalController.text = "10000";
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      print("🏁 انتهى تحميل البيانات");
+    }
+  }
+
+  // دالة لحفظ التعديلات في Firebase
+  Future<void> _saveProfileChanges() async {
+    if (_currentUser == null) return;
+
+    try {
+      // تحديث الاسم في Firebase Auth إذا تغير
+      if (_nameController.text != _currentUser!.displayName) {
+        await _currentUser!.updateDisplayName(_nameController.text);
+        print("✅ تم تحديث الاسم في Firebase Auth");
+      }
+
+      // تحديث البيانات في Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .set({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'height': int.tryParse(_heightController.text) ?? 176,
+        'weight': int.tryParse(_weightController.text) ?? 82,
+        'dailyStepsGoal': int.tryParse(_stepsGoalController.text) ?? 10000,
+        'notifications': _notificationsEnabled,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      print("✅ تم حفظ البيانات في Firestore");
+
+      // إعادة تحميل البيانات
+      await _loadUserData();
+
+      // إظهار رسالة نجاح
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("تم حفظ التغييرات بنجاح"),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      print("❌ خطأ في Firebase Auth: ${e.message}");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("خطأ في المصادقة: ${e.message}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print("❌ خطأ عام: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("حدث خطأ في الحفظ: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  // دالة لتغيير كلمة المرور
+  Future<void> _changePassword(String currentPassword, String newPassword) async {
+    if (_currentUser == null || _currentUser!.email == null) return;
+
+    try {
+      // إعادة المصادقة
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: _currentUser!.email!,
+        password: currentPassword,
+      );
+
+      await _currentUser!.reauthenticateWithCredential(credential);
+      await _currentUser!.updatePassword(newPassword);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("تم تغيير كلمة المرور بنجاح"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = "فشل تغيير كلمة المرور";
+      if (e.code == 'wrong-password') {
+        errorMessage = "كلمة المرور الحالية غير صحيحة";
+      } else if (e.code == 'weak-password') {
+        errorMessage = "كلمة المرور الجديدة ضعيفة";
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  // دالة تسجيل الخروج
+  Future<void> _logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("تم تسجيل الخروج بنجاح"),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print("❌ خطأ في تسجيل الخروج: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("خطأ في تسجيل الخروج: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  // دالة لفحص البيانات (للتشخيص)
+  Future<void> _debugCheckData() async {
+    print("=== فحص بيانات المستخدم ===");
+    
+    User? user = FirebaseAuth.instance.currentUser;
+    print("1. Firebase Auth:");
+    print("   - UID: ${user?.uid}");
+    print("   - Email: ${user?.email}");
+    print("   - DisplayName: ${user?.displayName}");
+    
+    if (user != null) {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+          
+      if (doc.exists) {
+        print("2. Firestore Data:");
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data.forEach((key, value) {
+          print("   - $key: $value");
+        });
+      } else {
+        print("2. ❌ لا يوجد مستند في Firestore!");
+      }
+    }
+    
+    print("3. الـ Controllers المحلية:");
+    print("   - Name: ${_nameController.text}");
+    print("   - Email: ${_emailController.text}");
+    print("   - Height: ${_heightController.text}");
+    print("   - Weight: ${_weightController.text}");
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("تم فحص البيانات، انظر الـ console"),
+          backgroundColor: Colors.tealAccent,
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -32,15 +311,19 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = S.of(context)!; 
-    final isRTL = Localizations.localeOf(context).languageCode == 'ar'; 
-    final currentLanguage = isRTL ? lang.arabic : lang.english; 
+    final lang = S.of(context)!;
+    final isRTL = Localizations.localeOf(context).languageCode == 'ar';
+    final currentLanguage = isRTL ? lang.arabic : lang.english;
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: const Color(0xFF0F1A17),
-        body: _buildBody(context, lang, currentLanguage, isRTL),
+        body: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(color: Colors.tealAccent),
+              )
+            : _buildBody(context, lang, currentLanguage, isRTL),
       ),
     );
   }
@@ -69,7 +352,12 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                 ),
               ),
-              const SizedBox(width: 48),
+              // زر تحديث البيانات
+              IconButton(
+                icon: const Icon(Icons.refresh, color: Colors.tealAccent),
+                onPressed: _loadUserData,
+                tooltip: "تحديث البيانات",
+              ),
             ],
           ),
         ),
@@ -80,6 +368,8 @@ class _AccountPageState extends State<AccountPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildProfileHeader(lang),
+                
+                
                 const SizedBox(height: 32),
                 _buildAccountManagementSection(lang, isRTL),
                 const SizedBox(height: 24),
@@ -114,6 +404,7 @@ class _AccountPageState extends State<AccountPage> {
       ),
       child: Row(
         children: [
+          // صورة البروفايل
           Container(
             width: 70,
             height: 70,
@@ -122,17 +413,23 @@ class _AccountPageState extends State<AccountPage> {
               shape: BoxShape.circle,
               border: Border.all(color: Colors.tealAccent, width: 2),
             ),
-            child: const Icon(
-              Icons.person,
-              color: Colors.tealAccent,
-              size: 40,
-            ),
+            child: _currentUser?.photoURL != null
+                ? CircleAvatar(
+                    backgroundImage: NetworkImage(_currentUser!.photoURL!),
+                    radius: 35,
+                  )
+                : const Icon(
+                    Icons.person,
+                    color: Colors.tealAccent,
+                    size: 40,
+                  ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // الاسم - من Firebase
                 Text(
                   _nameController.text,
                   style: const TextStyle(
@@ -142,6 +439,7 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                 ),
                 const SizedBox(height: 4),
+                // الإيميل - من Firebase
                 Text(
                   _emailController.text,
                   style: TextStyle(
@@ -155,6 +453,20 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDebugButton() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: ElevatedButton(
+        onPressed: _debugCheckData,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue.withOpacity(0.1),
+          foregroundColor: Colors.blue,
+        ),
+        child: const Text("فحص بيانات Firebase"),
       ),
     );
   }
@@ -175,16 +487,16 @@ class _AccountPageState extends State<AccountPage> {
           RichText(
             text: TextSpan(
               children: [
-                const TextSpan(
-                  text: "2,340 ",
-                  style: TextStyle(
+                TextSpan(
+                  text: "${_userData?['energyPoints'] ?? '2,340'} ",
+                  style: const TextStyle(
                     color: Colors.tealAccent,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextSpan(
-                  text: lang.totalEnergy, 
+                  text: lang.totalEnergy,
                   style: TextStyle(
                     color: Colors.grey.shade400,
                     fontSize: 14,
@@ -205,7 +517,7 @@ class _AccountPageState extends State<AccountPage> {
         Padding(
           padding: EdgeInsets.only(right: isRTL ? 8 : 0, left: isRTL ? 0 : 8, bottom: 12),
           child: Text(
-            lang.accountSecurityManagement, 
+            lang.accountSecurityManagement,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -215,15 +527,15 @@ class _AccountPageState extends State<AccountPage> {
         ),
         _buildSettingsItem(
           icon: Icons.person_outline,
-          title: lang.editProfile, 
-          subtitle: lang.changeNameAndEmail, 
+          title: lang.editProfile,
+          subtitle: lang.changeNameAndEmail,
           onTap: () => _showEditProfileDialog(context, lang, isRTL),
           isRTL: isRTL,
         ),
         const SizedBox(height: 12),
         _buildSettingsItem(
           icon: Icons.lock_outline,
-          title: lang.changePassword, 
+          title: lang.changePassword,
           subtitle: lang.updateCurrentPassword,
           onTap: () => _showChangePasswordDialog(context, lang, isRTL),
           isRTL: isRTL,
@@ -239,7 +551,7 @@ class _AccountPageState extends State<AccountPage> {
         Padding(
           padding: const EdgeInsets.only(right: 8, bottom: 12),
           child: Text(
-            lang.activityGoalsSettings, 
+            lang.activityGoalsSettings,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -249,20 +561,36 @@ class _AccountPageState extends State<AccountPage> {
         ),
         _buildEditableSettingsItem(
           icon: Icons.height,
-          title: lang.heightCm, 
+          title: lang.heightCm,
           controller: _heightController,
         ),
         const SizedBox(height: 12),
         _buildEditableSettingsItem(
           icon: Icons.monitor_weight,
-          title: lang.weightKg, 
+          title: lang.weightKg,
           controller: _weightController,
         ),
         const SizedBox(height: 12),
         _buildEditableSettingsItem(
           icon: Icons.directions_walk,
-          title: lang.dailyStepsGoal, 
+          title: lang.dailyStepsGoal,
           controller: _stepsGoalController,
+        ),
+        const SizedBox(height: 16),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: ElevatedButton.icon(
+            onPressed: _saveProfileChanges,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.tealAccent,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(Icons.save),
+            label: const Text("حفظ التغييرات"),
+          ),
         ),
       ],
     );
@@ -275,7 +603,7 @@ class _AccountPageState extends State<AccountPage> {
         Padding(
           padding: const EdgeInsets.only(right: 8, bottom: 12),
           child: Text(
-            lang.appSettings, 
+            lang.appSettings,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -285,7 +613,7 @@ class _AccountPageState extends State<AccountPage> {
         ),
         _buildSettingsItem(
           icon: Icons.language,
-          title: lang.language, 
+          title: lang.language,
           trailing: Row(
             children: [
               Text(
@@ -305,13 +633,14 @@ class _AccountPageState extends State<AccountPage> {
         const SizedBox(height: 12),
         _buildToggleSettingsItem(
           icon: Icons.notifications_outlined,
-          title: lang.notifications, 
-          subtitle: lang.receiveAlertsAndUpdates, 
+          title: lang.notifications,
+          subtitle: lang.receiveAlertsAndUpdates,
           value: _notificationsEnabled,
           onChanged: (value) {
             setState(() {
               _notificationsEnabled = value;
             });
+            _saveProfileChanges();
           },
         ),
       ],
@@ -325,7 +654,7 @@ class _AccountPageState extends State<AccountPage> {
         Padding(
           padding: const EdgeInsets.only(right: 8, bottom: 12),
           child: Text(
-            lang.supportPolicies, 
+            lang.supportPolicies,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -335,14 +664,14 @@ class _AccountPageState extends State<AccountPage> {
         ),
         _buildSettingsItem(
           icon: Icons.help_outline,
-          title: lang.helpSupport, 
+          title: lang.helpSupport,
           onTap: () {},
           isRTL: true,
         ),
         const SizedBox(height: 12),
         _buildSettingsItem(
           icon: Icons.privacy_tip_outlined,
-          title: lang.privacyPolicy, 
+          title: lang.privacyPolicy,
           onTap: () {},
           isRTL: true,
         ),
@@ -530,7 +859,7 @@ class _AccountPageState extends State<AccountPage> {
                   const SizedBox(height: 16),
                   _buildCustomTextField(
                     controller: _emailController,
-                    label: lang.email, 
+                    label: lang.email,
                   ),
                 ],
               ),
@@ -538,18 +867,18 @@ class _AccountPageState extends State<AccountPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(lang.cancel, style: const TextStyle(color: Colors.grey)), // استبدل النص الثابت
+                child: Text(lang.cancel, style: const TextStyle(color: Colors.grey)),
               ),
               ElevatedButton(
-                onPressed: () {
-                  setState(() {});
+                onPressed: () async {
+                  await _saveProfileChanges();
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.tealAccent,
                   foregroundColor: Colors.black,
                 ),
-                child: Text(lang.save), 
+                child: Text(lang.save),
               ),
             ],
           ),
@@ -571,7 +900,7 @@ class _AccountPageState extends State<AccountPage> {
           child: AlertDialog(
             backgroundColor: const Color(0xFF182A25),
             title: Text(
-              lang.changePassword, 
+              lang.changePassword,
               style: const TextStyle(color: Colors.white),
             ),
             content: SingleChildScrollView(
@@ -580,19 +909,19 @@ class _AccountPageState extends State<AccountPage> {
                 children: [
                   _buildCustomTextField(
                     controller: oldPasswordController,
-                    label: lang.currentPassword, 
+                    label: lang.currentPassword,
                     obscure: true,
                   ),
                   const SizedBox(height: 16),
                   _buildCustomTextField(
                     controller: newPasswordController,
-                    label: lang.newPassword, 
+                    label: lang.newPassword,
                     obscure: true,
                   ),
                   const SizedBox(height: 16),
                   _buildCustomTextField(
                     controller: confirmPasswordController,
-                    label: lang.confirmPassword, 
+                    label: lang.confirmPassword,
                     obscure: true,
                   ),
                 ],
@@ -601,17 +930,41 @@ class _AccountPageState extends State<AccountPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(lang.cancel, style: const TextStyle(color: Colors.grey)), 
+                child: Text(lang.cancel, style: const TextStyle(color: Colors.grey)),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  if (newPasswordController.text != confirmPasswordController.text) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("كلمات المرور غير متطابقة"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  if (newPasswordController.text.length < 6) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text("كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  await _changePassword(
+                    oldPasswordController.text,
+                    newPasswordController.text,
+                  );
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.tealAccent,
                   foregroundColor: Colors.black,
                 ),
-                child: Text(lang.change), 
+                child: Text(lang.change),
               ),
             ],
           ),
@@ -625,13 +978,13 @@ class _AccountPageState extends State<AccountPage> {
       context: context,
       builder: (context) {
         final lang = S.of(context)!;
-        
+
         return Directionality(
           textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
           child: AlertDialog(
             backgroundColor: const Color(0xFF182A25),
             title: Text(
-              lang.chooseLanguage, 
+              lang.chooseLanguage,
               style: const TextStyle(color: Colors.white),
             ),
             content: SizedBox(
@@ -645,7 +998,6 @@ class _AccountPageState extends State<AccountPage> {
                         ? const Icon(Icons.check, color: Colors.tealAccent)
                         : null,
                     onTap: () {
-                     
                       _changeLanguage(context, const Locale('ar', 'SA'));
                       Navigator.pop(context);
                     },
@@ -656,7 +1008,6 @@ class _AccountPageState extends State<AccountPage> {
                         ? const Icon(Icons.check, color: Colors.tealAccent)
                         : null,
                     onTap: () {
-                      
                       _changeLanguage(context, const Locale('en', 'US'));
                       Navigator.pop(context);
                     },
@@ -670,20 +1021,10 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // void _changeLanguage(BuildContext context, Locale newLocale) {
-  //   print('تغيير اللغة إلى: ${newLocale.languageCode}');
-   
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text('سيتم تغيير اللغة في التحديث القادم'),
-  //       backgroundColor: Colors.tealAccent,
-  //     ),
-  //   );
-  // }
   void _changeLanguage(BuildContext context, Locale newLocale) {
-  final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
-  languageProvider.setLocale(newLocale);
-}
+    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    languageProvider.setLocale(newLocale);
+  }
 
   void _showLogoutConfirmation(BuildContext context, S lang, bool isRTL) {
     showDialog(
@@ -694,27 +1035,28 @@ class _AccountPageState extends State<AccountPage> {
           child: AlertDialog(
             backgroundColor: const Color(0xFF182A25),
             title: Text(
-              lang.logout, 
+              lang.logout,
               style: const TextStyle(color: Colors.white),
             ),
             content: Text(
-              lang.logoutConfirm, 
+              lang.logoutConfirm,
               style: const TextStyle(color: Colors.grey),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(lang.cancel, style: const TextStyle(color: Colors.grey)), 
+                child: Text(lang.cancel, style: const TextStyle(color: Colors.grey)),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
-                  Navigator.pop(context);
+                  await _logout();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
-                ), child: null,
+                ),
+                child: Text(lang.logout),
               ),
             ],
           ),

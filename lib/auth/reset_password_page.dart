@@ -28,7 +28,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(S.of(context)!.resetLinkSent), // استبدل النص الثابت
+            content: Text(S.of(context)!.resetLinkSent), 
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 4),
           ),
@@ -37,20 +37,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
         String errorMessage;
-        final lang = S.of(context)!; // احصل على النصوص المترجمة
+        final lang = S.of(context)!; 
 
         switch (e.code) {
           case 'user-not-found':
-            errorMessage = lang.userNotFound; // استبدل النص الثابت
+            errorMessage = lang.userNotFound; 
             break;
           case 'invalid-email':
-            errorMessage = lang.invalidEmail; // استبدل النص الثابت
+            errorMessage = lang.invalidEmail; 
             break;
           case 'user-disabled':
-            errorMessage = lang.accountDisabled; // استبدل النص الثابت
+            errorMessage = lang.accountDisabled; 
             break;
           default:
-            errorMessage = e.message ?? lang.resetError; // استبدل النص الثابت
+            errorMessage = e.message ?? lang.resetError; 
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -63,7 +63,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(S.of(context)!.unexpectedError), // استبدل النص الثابت
+            content: Text(S.of(context)!.unexpectedError), 
             backgroundColor: Colors.red,
           ),
         );
@@ -83,13 +83,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = S.of(context)!; // الحصول على النصوص المترجمة
+    final lang = S.of(context)!; 
     final isRTL =
         Localizations.localeOf(context).languageCode ==
-        'ar'; // تحديد اتجاه النص
+        'ar'; 
 
     return Directionality(
-      // أضف هذا الـ Directionality
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: const Color(0xFF0F1A17),
@@ -106,7 +105,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     const SizedBox(height: 40),
 
                     Text(
-                      lang.resetPassword, // استبدل النص الثابت
+                      lang.resetPassword, 
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -117,7 +116,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     const SizedBox(height: 20),
 
                     Text(
-                      lang.enterEmailForReset, // استبدل النص الثابت
+                      lang.enterEmailForReset, 
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white70,
@@ -130,15 +129,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     // reset email field
                     CustomTextField(
                       controller: emailController,
-                      label: lang.email, // استبدل النص الثابت
+                      label: lang.email, 
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return lang.pleaseEnterEmail; // استبدل رسالة الخطأ
+                          return lang.pleaseEnterEmail; 
                         }
                         if (!value.contains('@') || !value.contains('.')) {
                           return lang
-                              .enterValidEmailPlease; // استبدل رسالة الخطأ
+                              .enterValidEmailPlease; 
                         }
                         return null;
                       },
@@ -168,7 +167,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                 ),
                               )
                             : Text(
-                                lang.sendResetLink, // استبدل النص الثابت
+                                lang.sendResetLink, 
                                 style: const TextStyle(
                                   fontSize: 18,
                                   color: Colors.black,
@@ -187,7 +186,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               Navigator.pop(context);
                             },
                       child: Text(
-                        lang.backToLogin, // استبدل النص الثابت
+                        lang.backToLogin, 
                         style: const TextStyle(color: Colors.white70),
                       ),
                     ),

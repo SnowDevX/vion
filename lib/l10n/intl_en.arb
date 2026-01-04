@@ -91,6 +91,5 @@
       "dailyStepsGoal": "Daily Steps Goal",
       "receiveAlertsAndUpdates": "Receive alerts and updates",
       "change": "Change",
-        "languageChangedTo": "Language changed to"
-
+      "languageChangedTo": "Language changed to"
 }

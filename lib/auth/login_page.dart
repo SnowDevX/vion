@@ -20,10 +20,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = S.of(context)!; // الحصول على النصوص المترجمة
-    final isRTL = Localizations.localeOf(context).languageCode == 'ar'; // تحديد اتجاه النص
+    final lang = S.of(context)!; 
+    final isRTL = Localizations.localeOf(context).languageCode == 'ar'; 
 
-    return Directionality( // أضف هذا الـ Directionality
+    return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: const Color(0xFF0F1A17),
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 20),
 
                     Text(
-                      lang.welcomeBack, // استبدل النص الثابت
+                      lang.welcomeBack, 
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 26,
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 8),
 
                     Text(
-                      lang.loginToContinue, // استبدل النص الثابت
+                      lang.loginToContinue, 
                       style: const TextStyle(color: Colors.white70, fontSize: 16),
                     ),
 
@@ -60,13 +60,13 @@ class _LoginPageState extends State<LoginPage> {
                     // Email or Username
                     CustomTextField(
                       controller: emailController,
-                      label: lang.emailOrUsername, // استبدل النص الثابت
+                      label: lang.emailOrUsername, 
                       onSaved: (val) => Myemail = val,
                       keyboardType: TextInputType.emailAddress,
                       validator: (val) {
-                        if (val == null || val.isEmpty) return lang.emailRequired; // استبدل رسالة الخطأ
+                        if (val == null || val.isEmpty) return lang.emailRequired; 
                         if (!val.contains("@") || !val.contains(".")) {
-                          return lang.enterValidEmail; // استبدل رسالة الخطأ
+                          return lang.enterValidEmail; 
                         }
                         return null;
                       },
@@ -75,16 +75,16 @@ class _LoginPageState extends State<LoginPage> {
                     // Password
                     CustomTextField(
                       controller: passController,
-                      label: lang.password, // استبدل النص الثابت
+                      label: lang.password,
                       obscure: true,
                       onSaved: (val) => Mypassword = val,
                       keyboardType: TextInputType.visiblePassword,
                       validator: (val) {
                         if (val == null || val.isEmpty) {
-                          return lang.passwordRequired; // استبدل رسالة الخطأ
+                          return lang.passwordRequired; 
                         }
                         if (val.length < 6) {
-                          return lang.passwordMinLength; // استبدل رسالة الخطأ
+                          return lang.passwordMinLength; 
                         }
                         return null;
                       },
@@ -112,12 +112,12 @@ class _LoginPageState extends State<LoginPage> {
                                   email: Myemail.trim(),
                                   password: Mypassword.trim(),
                                 );
-
+                            print("USER LOGGED IN");
                             Navigator.pushReplacementNamed(context, '/home');
                           }
                         },
                         child: Text(
-                          lang.login, // استبدل النص الثابت
+                          lang.login, 
                           style: const TextStyle(fontSize: 18, color: Colors.black),
                         ),
                       ),
@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushNamed(context, '/reset');
                       },
                       child: Text(
-                        lang.forgotPassword, // استبدل النص الثابت
+                        lang.forgotPassword, 
                         style: const TextStyle(color: Colors.white70),
                       ),
                     ),
@@ -147,11 +147,11 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            lang.noAccount, // استبدل النص الثابت
+                            lang.noAccount, 
                             style: const TextStyle(color: Colors.white),
                           ),
                           Text(
-                            lang.join, // استبدل النص الثابت
+                            lang.join, 
                             style: const TextStyle(
                               color: Color(0xFF44C37F),
                               fontWeight: FontWeight.bold,

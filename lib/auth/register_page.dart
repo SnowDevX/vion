@@ -69,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
           );
         }
 
-        // 4. الانتقال مباشرة إلى الصفحة الرئيسية بعد التسجيل
+        // الانتقال مباشرة إلى الصفحة الرئيسية بعد التسجيل
         if (mounted) {
           Navigator.pushReplacementNamed(context, '/home');
         }

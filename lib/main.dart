@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grandustionapp/generated/l10n.dart';
 import 'package:grandustionapp/screens/account_page.dart';
+import 'package:grandustionapp/screens/charging_stations_page.dart';
 import 'package:grandustionapp/screens/home_page.dart';
 import 'package:grandustionapp/auth/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,7 +12,6 @@ import 'package:grandustionapp/auth/reset_password_page.dart';
 import 'package:grandustionapp/providers/language_provider.dart';
 import 'package:provider/provider.dart';
 
-//الربط بفايربيز
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -32,7 +32,7 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
-// التحقق من حالة تسجيل الدخول
+
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
@@ -69,6 +69,8 @@ class _MyAppState extends State<MyApp> {
             '/register': (context) => const RegisterPage(),
             '/reset': (context) => const ResetPasswordPage(),
             '/account': (context) => const AccountPage(),
+              '/charging-stations': (context) => const ChargingStationsPage(), 
+
           },
         );
       },

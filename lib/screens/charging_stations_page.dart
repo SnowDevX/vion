@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grandustionapp/generated/l10n.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart'; 
+import 'package:geocoding/geocoding.dart';
 
 class ChargingStationsPage extends StatefulWidget {
   const ChargingStationsPage({super.key});
@@ -12,14 +12,14 @@ class ChargingStationsPage extends StatefulWidget {
 
 class _ChargingStationsPageState extends State<ChargingStationsPage> {
   Position? _currentPosition;
-  String _currentAddress = "جاري تحديد موقعك...";
+  String _currentAddress = "";
   bool _isLoading = true;
   bool _locationEnabled = true;
-  
+
   String _selectedFilter = 'الكل';
   String _selectedArea = 'الكل';
   double _maxDistance = 50;
-  
+
   final List<Map<String, dynamic>> _demoStations = [];
 
   @override
@@ -28,124 +28,112 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
     _getCurrentLocation();
   }
 
-  // ✅ دالة الحصول على الموقع والعنوان معاً
   Future<void> _getCurrentLocation() async {
-    setState(() {
-      _isLoading = true;
-      _currentAddress = "جاري تحديد موقعك...";
-    });
+  setState(() {
+    _isLoading = true;
+    _currentAddress = S.of(context)!.determiningLocation;
+  });
 
-    try {
-      // التحقق من الصلاحيات
-      LocationPermission permission = await Geolocator.checkPermission();
-      
+  try {
+    LocationPermission permission = await Geolocator.checkPermission();
+    
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          setState(() {
-            _locationEnabled = false;
-            _currentAddress = "تم رفض صلاحية الوصول للموقع";
-            _isLoading = false;
-          });
-          return;
-        }
-      }
-      
-      if (permission == LocationPermission.deniedForever) {
         setState(() {
           _locationEnabled = false;
-          _currentAddress = "صلاحية الموقع مرفقة بشكل دائم";
+          _currentAddress = S.of(context)!.locationPermissionDenied;
           _isLoading = false;
         });
         return;
       }
-
-      // الحصول على الموقع
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
       setState(() {
-        _currentPosition = position;
-        _currentAddress = "جاري تحويل الإحداثيات إلى عنوان...";
-      });
-
-      // ✅ تحويل الإحداثيات إلى عنوان مفهوم
-      await _getAddressFromLatLng(position.latitude, position.longitude);
-      
-    } catch (e) {
-      setState(() {
-        _currentAddress = "خطأ في تحديد الموقع: $e";
+        _locationEnabled = false;
+        _currentAddress = S.of(context)!.locationPermissionPermanentlyDenied;
         _isLoading = false;
       });
+      return;
     }
-  }
 
-  // ✅ دالة تحويل الإحداثيات إلى عنوان (Reverse Geocoding)
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    setState(() {
+      _currentPosition = position;
+      _currentAddress = S.of(context)!.convertingCoordinates;
+    });
+
+    await _getAddressFromLatLng(position.latitude, position.longitude);
+    
+  } catch (e) {
+    print("❌ خطأ في تحديد الموقع: $e");
+    
+    setState(() {
+      // ✅ تمرير متغير واحد فقط
+      _currentAddress = S.of(context)!.locationError(e.toString());
+      _isLoading = false;
+    });
+  }
+}
+
   Future<void> _getAddressFromLatLng(double latitude, double longitude) async {
     try {
-      print("🔄 تحويل الإحداثيات: $latitude, $longitude");
-      
       List<Placemark> placemarks = await placemarkFromCoordinates(
-        latitude, 
-        longitude
+        latitude,
+        longitude,
       );
 
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
-        
-        // بناء عنوان مفهوم للمستخدم العادي
+
         String address = '';
-        
-        // اسم الشارع (الأهم)
+
         if (place.street != null && place.street!.isNotEmpty) {
           address = place.street!;
         }
-        
-        // اسم الحي
+
         if (place.subLocality != null && place.subLocality!.isNotEmpty) {
-          address = address.isEmpty 
-              ? place.subLocality! 
+          address = address.isEmpty
+              ? place.subLocality!
               : '$address، ${place.subLocality!}';
         }
-        
-        // اسم المدينة
+
         if (place.locality != null && place.locality!.isNotEmpty) {
-          address = address.isEmpty 
-              ? place.locality! 
+          address = address.isEmpty
+              ? place.locality!
               : '$address، ${place.locality!}';
         }
-        
-        // إذا لم نجد شارع أو حي، نستخدم المنطقة
+
         if (address.isEmpty) {
-          if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
+          if (place.administrativeArea != null &&
+              place.administrativeArea!.isNotEmpty) {
             address = place.administrativeArea!;
           } else if (place.country != null && place.country!.isNotEmpty) {
             address = place.country!;
           } else {
-            address = "موقع غير معروف";
+            address = S.of(context)!.addressNotFound;
           }
         }
-        
-        print("✅ العنوان: $address");
-        
+
         if (!mounted) return;
-        
+
         setState(() {
           _currentAddress = address;
           _isLoading = false;
         });
-        
       } else {
         setState(() {
-          _currentAddress = "لم يتم العثور على عنوان قريب";
+          _currentAddress = S.of(context)!.addressNotFound;
           _isLoading = false;
         });
       }
     } catch (e) {
-      print("❌ خطأ في تحويل العنوان: $e");
       setState(() {
-        _currentAddress = "خطأ في تحديد العنوان";
+        _currentAddress = S.of(context)!.addressError;
         _isLoading = false;
       });
     }
@@ -154,27 +142,25 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
   @override
   Widget build(BuildContext context) {
     final isRTL = Localizations.localeOf(context).languageCode == 'ar';
-    final lang = S.of(context)!;
+    final lang = S.of(context)!; // ✅ الحصول على الترجمة
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: const Color(0xFF0F1A17),
-        appBar: _buildAppBar(isRTL),
-        body: _isLoading 
-            ? _buildLoadingState()
-            : _buildBody(),
+        appBar: _buildAppBar(isRTL, lang),
+        body: _isLoading ? _buildLoadingState(lang) : _buildBody(lang),
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(bool isRTL) {
+  PreferredSizeWidget _buildAppBar(bool isRTL, S lang) {
     return AppBar(
       backgroundColor: const Color(0xFF0F1A17),
       elevation: 0,
-      title: const Text(
-        'محطات الشحن',
-        style: TextStyle(
+      title: Text(
+        lang.chargingStations, // ✅ استخدام الترجمة
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 22,
           fontWeight: FontWeight.bold,
@@ -192,27 +178,24 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
         IconButton(
           icon: const Icon(Icons.refresh, color: Colors.white),
           onPressed: _getCurrentLocation,
-          tooltip: 'تحديث الموقع',
+          tooltip: lang.refreshLocation, // ✅ استخدام الترجمة
         ),
       ],
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(S lang) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(
-            color: Colors.tealAccent,
-          ),
+          const CircularProgressIndicator(color: Colors.tealAccent),
           const SizedBox(height: 20),
           Text(
-            _currentAddress, // ✅ عرض رسالة الحالة الحالية
-            style: TextStyle(
-              color: Colors.grey.shade400,
-              fontSize: 16,
-            ),
+            _currentAddress.isNotEmpty
+                ? _currentAddress
+                : lang.determiningLocation,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ],
@@ -220,18 +203,17 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(S lang) {
     return Column(
       children: [
-        _buildLocationCard(),
-        if (!_locationEnabled) _buildPermissionWarning(),
-        _buildComingSoonCard(),
+        _buildLocationCard(lang),
+        if (!_locationEnabled) _buildPermissionWarning(lang),
+        _buildComingSoonCard(lang),
       ],
     );
   }
 
-  // ✅ بطاقة الموقع المعدلة (بدون إحداثيات)
-  Widget _buildLocationCard() {
+  Widget _buildLocationCard(S lang) {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
@@ -269,18 +251,19 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'موقعك الحالي',
-                      style: TextStyle(
+                    Text(
+                      lang.yourCurrentLocation, // ✅ استخدام الترجمة
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // ✅ العنوان المفهوم بدل الإحداثيات
                     Text(
-                      _currentAddress,
+                      _currentAddress.isNotEmpty
+                          ? _currentAddress
+                          : lang.determiningLocation,
                       style: TextStyle(
                         color: Colors.grey.shade400,
                         fontSize: 14,
@@ -293,34 +276,26 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
               ),
             ],
           ),
-          
+
           if (_currentPosition != null) ...[
             const SizedBox(height: 16),
             const Divider(color: Colors.grey),
             const SizedBox(height: 8),
-            
-            // ✅ إضافة أيقونة النجاح مع تحديث الموقع
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 16,
-                ),
+                Icon(Icons.check_circle, color: Colors.green, size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  'تم تحديد موقعك بنجاح',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 14,
-                  ),
+                  lang.locationSuccess, // ✅ استخدام الترجمة
+                  style: TextStyle(color: Colors.green, fontSize: 14),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             Center(
               child: ElevatedButton.icon(
                 onPressed: _getCurrentLocation,
@@ -336,7 +311,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                   ),
                 ),
                 icon: const Icon(Icons.refresh),
-                label: const Text('تحديث الموقع'),
+                label: Text(lang.refreshLocation), // ✅ استخدام الترجمة
               ),
             ),
           ],
@@ -345,9 +320,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
     );
   }
 
-  // ✅ تم إزالة دالة _buildCoordinateItem بالكامل (لأننا ما نعرض الإحداثيات)
-
-  Widget _buildPermissionWarning() {
+  Widget _buildPermissionWarning(S lang) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -364,8 +337,8 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'صلاحية الموقع مطلوبة',
+                Text(
+                  lang.locationPermissionRequired, // ✅ استخدام الترجمة
                   style: TextStyle(
                     color: Colors.orange,
                     fontWeight: FontWeight.bold,
@@ -373,11 +346,8 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'يرجى السماح للتطبيق بالوصول إلى موقعك لعرض المحطات القريبة',
-                  style: TextStyle(
-                    color: Colors.grey.shade300,
-                    fontSize: 12,
-                  ),
+                  lang.locationPermissionMessage, // ✅ استخدام الترجمة
+                  style: TextStyle(color: Colors.grey.shade300, fontSize: 12),
                 ),
               ],
             ),
@@ -387,7 +357,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
     );
   }
 
-  Widget _buildComingSoonCard() {
+  Widget _buildComingSoonCard(S lang) {
     return Expanded(
       child: Center(
         child: SingleChildScrollView(
@@ -407,48 +377,42 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                   color: Colors.tealAccent,
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
-              const Text(
-                '🚧 قريباً',
-                style: TextStyle(
+
+              Text(
+                lang.comingSoon, // ✅ استخدام الترجمة
+                style: const TextStyle(
                   color: Colors.tealAccent,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Text(
-                  'ميزة محطات الشحن قيد التطوير',
+                  lang.featureInDevelopment, // ✅ استخدام الترجمة
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 18),
                 ),
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Text(
-                  'قريباً سنوفر لك أقرب محطات الشحن حول موقعك الحالي',
+                  lang.comingSoonDescription, // ✅ استخدام الترجمة
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
                 padding: const EdgeInsets.all(20),
@@ -459,9 +423,9 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'الميزات القادمة:',
-                      style: TextStyle(
+                    Text(
+                      lang.upcomingFeatures, // ✅ استخدام الترجمة
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -470,31 +434,31 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                     const SizedBox(height: 12),
                     _buildFutureFeature(
                       icon: Icons.location_on,
-                      title: 'محطات قريبة من موقعك',
-                      description: 'عرض المحطات حسب المسافة',
+                      title: lang.nearbyStations,
+                      description: lang.nearbyStationsDesc,
                     ),
                     const SizedBox(height: 8),
                     _buildFutureFeature(
                       icon: Icons.filter_alt,
-                      title: 'فلترة متقدمة',
-                      description: 'حسب النوع، المسافة، التوفر',
+                      title: lang.advancedFilters,
+                      description: lang.advancedFiltersDesc,
                     ),
                     const SizedBox(height: 8),
                     _buildFutureFeature(
                       icon: Icons.map,
-                      title: 'خريطة تفاعلية',
-                      description: 'عرض المحطات على الخريطة',
+                      title: lang.interactiveMap,
+                      description: lang.interactiveMapDesc,
                     ),
                     const SizedBox(height: 8),
                     _buildFutureFeature(
                       icon: Icons.navigation,
-                      title: 'اتجاهات الوصول',
-                      description: 'أفضل طريق للمحطة',
+                      title: lang.navigationDirections,
+                      description: lang.navigationDirectionsDesc,
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 40),
             ],
           ),
@@ -533,10 +497,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
               ),
               Text(
                 description,
-                style: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
               ),
             ],
           ),

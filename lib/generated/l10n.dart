@@ -783,6 +783,256 @@ class S {
       args: [],
     );
   }
+
+  /// `Charging Stations`
+  String get chargingStations {
+    return Intl.message(
+      'Charging Stations',
+      name: 'chargingStations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Current Location`
+  String get yourCurrentLocation {
+    return Intl.message(
+      'Your Current Location',
+      name: 'yourCurrentLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Determining your location...`
+  String get determiningLocation {
+    return Intl.message(
+      'Determining your location...',
+      name: 'determiningLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location permission denied`
+  String get locationPermissionDenied {
+    return Intl.message(
+      'Location permission denied',
+      name: 'locationPermissionDenied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location permission permanently denied`
+  String get locationPermissionPermanentlyDenied {
+    return Intl.message(
+      'Location permission permanently denied',
+      name: 'locationPermissionPermanentlyDenied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location error: {error}`
+  String locationError(Object error) {
+    return Intl.message(
+      'Location error: $error',
+      name: 'locationError',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Converting coordinates to address...`
+  String get convertingCoordinates {
+    return Intl.message(
+      'Converting coordinates to address...',
+      name: 'convertingCoordinates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No nearby address found`
+  String get addressNotFound {
+    return Intl.message(
+      'No nearby address found',
+      name: 'addressNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error getting address`
+  String get addressError {
+    return Intl.message(
+      'Error getting address',
+      name: 'addressError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location determined successfully`
+  String get locationSuccess {
+    return Intl.message(
+      'Location determined successfully',
+      name: 'locationSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh Location`
+  String get refreshLocation {
+    return Intl.message(
+      'Refresh Location',
+      name: 'refreshLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location Permission Required`
+  String get locationPermissionRequired {
+    return Intl.message(
+      'Location Permission Required',
+      name: 'locationPermissionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please allow the app to access your location to show nearby stations`
+  String get locationPermissionMessage {
+    return Intl.message(
+      'Please allow the app to access your location to show nearby stations',
+      name: 'locationPermissionMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🚧 Coming Soon`
+  String get comingSoon {
+    return Intl.message(
+      '🚧 Coming Soon',
+      name: 'comingSoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Charging stations feature is under development`
+  String get featureInDevelopment {
+    return Intl.message(
+      'Charging stations feature is under development',
+      name: 'featureInDevelopment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Soon we will provide you with the nearest charging stations around your current location`
+  String get comingSoonDescription {
+    return Intl.message(
+      'Soon we will provide you with the nearest charging stations around your current location',
+      name: 'comingSoonDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upcoming Features:`
+  String get upcomingFeatures {
+    return Intl.message(
+      'Upcoming Features:',
+      name: 'upcomingFeatures',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nearby Stations`
+  String get nearbyStations {
+    return Intl.message(
+      'Nearby Stations',
+      name: 'nearbyStations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show stations by distance`
+  String get nearbyStationsDesc {
+    return Intl.message(
+      'Show stations by distance',
+      name: 'nearbyStationsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Advanced Filters`
+  String get advancedFilters {
+    return Intl.message(
+      'Advanced Filters',
+      name: 'advancedFilters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By type, distance, availability`
+  String get advancedFiltersDesc {
+    return Intl.message(
+      'By type, distance, availability',
+      name: 'advancedFiltersDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Interactive Map`
+  String get interactiveMap {
+    return Intl.message(
+      'Interactive Map',
+      name: 'interactiveMap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View stations on map`
+  String get interactiveMapDesc {
+    return Intl.message(
+      'View stations on map',
+      name: 'interactiveMapDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Navigation Directions`
+  String get navigationDirections {
+    return Intl.message(
+      'Navigation Directions',
+      name: 'navigationDirections',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Best route to station`
+  String get navigationDirectionsDesc {
+    return Intl.message(
+      'Best route to station',
+      name: 'navigationDirectionsDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

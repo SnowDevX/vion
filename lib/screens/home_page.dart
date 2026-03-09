@@ -4,7 +4,7 @@ import 'package:grandustionapp/screens/charging_stations_page.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'activity_page.dart';
 import 'rewards_page.dart';
-import 'package:grandustionapp/generated/l10n.dart'; // استخدم هذا الاستيراد
+import 'package:grandustionapp/generated/l10n.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -419,7 +419,7 @@ Widget _buildBottomNavBar(BuildContext context) {
         // ✅ إضافة عنصر جديد
         BottomNavigationBarItem(
           icon: const Icon(Icons.ev_station), 
-          label: 'محطات الشحن', // أو استخدم lang.chargingStations إذا كان موجوداً
+          label: lang.chargingStations, 
         ),
       ],
     ),

@@ -22,6 +22,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(percent) => "رائع! لقد قطعت ${percent}% من هدفك اليومي";
 
+  static String m1(error) => "خطأ في تحديد الموقع: ${error}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "account": MessageLookupByLibrary.simpleMessage("حسابي"),
@@ -40,6 +42,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "activityGoalsSettings": MessageLookupByLibrary.simpleMessage(
       "إعدادات النشاط والأهداف",
     ),
+    "addressError": MessageLookupByLibrary.simpleMessage(
+      "خطأ في تحديد العنوان",
+    ),
+    "addressNotFound": MessageLookupByLibrary.simpleMessage(
+      "لم يتم العثور على عنوان قريب",
+    ),
+    "advancedFilters": MessageLookupByLibrary.simpleMessage("فلترة متقدمة"),
+    "advancedFiltersDesc": MessageLookupByLibrary.simpleMessage(
+      "حسب النوع، المسافة، التوفر",
+    ),
     "appSettings": MessageLookupByLibrary.simpleMessage("إعدادات التطبيق"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "backToLogin": MessageLookupByLibrary.simpleMessage("العودة لتسجيل الدخول"),
@@ -50,7 +62,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
     "chargeNow": MessageLookupByLibrary.simpleMessage("اشحن الآن"),
+    "chargingStations": MessageLookupByLibrary.simpleMessage("محطات الشحن"),
     "chooseLanguage": MessageLookupByLibrary.simpleMessage("اختر اللغة"),
+    "comingSoon": MessageLookupByLibrary.simpleMessage("🚧 قريباً"),
+    "comingSoonDescription": MessageLookupByLibrary.simpleMessage(
+      "قريباً سنوفر لك أقرب محطات الشحن حول موقعك الحالي",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("تأكيد"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور",
@@ -66,6 +83,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "نقطة 1/100 = خطوة",
     ),
     "conversionRate": MessageLookupByLibrary.simpleMessage("معدل التحويل"),
+    "convertingCoordinates": MessageLookupByLibrary.simpleMessage(
+      "جاري تحويل الإحداثيات إلى عنوان...",
+    ),
     "createAccount": MessageLookupByLibrary.simpleMessage("إنهاء الحساب"),
     "currentPassword": MessageLookupByLibrary.simpleMessage(
       "كلمة المرور الحالية",
@@ -73,6 +93,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailySteps": MessageLookupByLibrary.simpleMessage("الهدف اليومي للخطوات"),
     "dailyStepsGoal": MessageLookupByLibrary.simpleMessage(
       "الهدف اليومي للخطوات",
+    ),
+    "determiningLocation": MessageLookupByLibrary.simpleMessage(
+      "جاري تحديد موقعك...",
     ),
     "editProfile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
@@ -94,6 +117,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "الرجاء إدخال بريد إلكتروني صالح",
     ),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("حدث خطأ"),
+    "featureInDevelopment": MessageLookupByLibrary.simpleMessage(
+      "ميزة محطات الشحن قيد التطوير",
+    ),
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
@@ -102,6 +128,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "heightCm": MessageLookupByLibrary.simpleMessage("الطول (سم)"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("المساعدة والدعم"),
     "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
+    "interactiveMap": MessageLookupByLibrary.simpleMessage("خريطة تفاعلية"),
+    "interactiveMapDesc": MessageLookupByLibrary.simpleMessage(
+      "عرض المحطات على الخريطة",
+    ),
     "invalidEmail": MessageLookupByLibrary.simpleMessage(
       "البريد الإلكتروني غير صالح",
     ),
@@ -111,6 +141,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("اللغة"),
     "languageChangedTo": MessageLookupByLibrary.simpleMessage(
       "تم تغيير اللغة إلى",
+    ),
+    "locationError": m1,
+    "locationPermissionDenied": MessageLookupByLibrary.simpleMessage(
+      "تم رفض صلاحية الوصول للموقع",
+    ),
+    "locationPermissionMessage": MessageLookupByLibrary.simpleMessage(
+      "يرجى السماح للتطبيق بالوصول إلى موقعك لعرض المحطات القريبة",
+    ),
+    "locationPermissionPermanentlyDenied": MessageLookupByLibrary.simpleMessage(
+      "صلاحية الموقع مرفقة بشكل دائم",
+    ),
+    "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "صلاحية الموقع مطلوبة",
+    ),
+    "locationSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم تحديد موقعك بنجاح",
     ),
     "logActivity": MessageLookupByLibrary.simpleMessage("سجل نشاطي"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
@@ -124,6 +170,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "myAccount": MessageLookupByLibrary.simpleMessage("حسابي"),
     "name": MessageLookupByLibrary.simpleMessage("الاسم"),
     "nameRequired": MessageLookupByLibrary.simpleMessage("الاسم مطلوب"),
+    "navigationDirections": MessageLookupByLibrary.simpleMessage(
+      "اتجاهات الوصول",
+    ),
+    "navigationDirectionsDesc": MessageLookupByLibrary.simpleMessage(
+      "أفضل طريق للمحطة",
+    ),
+    "nearbyStations": MessageLookupByLibrary.simpleMessage(
+      "محطات قريبة من موقعك",
+    ),
+    "nearbyStationsDesc": MessageLookupByLibrary.simpleMessage(
+      "عرض المحطات حسب المسافة",
+    ),
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟ "),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
@@ -147,6 +205,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الخصوصية وسياسة الاستخدام",
     ),
     "profileHeader": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
+    "refreshLocation": MessageLookupByLibrary.simpleMessage("تحديث الموقع"),
     "resetError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ أثناء إرسال رابط إعادة التعيين",
     ),
@@ -167,6 +226,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ غير متوقع",
     ),
+    "upcomingFeatures": MessageLookupByLibrary.simpleMessage(
+      "الميزات القادمة:",
+    ),
     "updateCurrentPassword": MessageLookupByLibrary.simpleMessage(
       "تحديث كلمة المرور الحالية",
     ),
@@ -176,5 +238,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "weight": MessageLookupByLibrary.simpleMessage("الوزن (كجم)"),
     "weightKg": MessageLookupByLibrary.simpleMessage("الوزن (كجم)"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("أهلاً بعودتك"),
+    "yourCurrentLocation": MessageLookupByLibrary.simpleMessage("موقعك الحالي"),
   };
 }

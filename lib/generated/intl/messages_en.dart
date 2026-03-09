@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m0(percent) =>
       "Great! You\'ve completed ${percent}% of your daily goal";
 
+  static String m1(error) => "Location error: ${error}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "account": MessageLookupByLibrary.simpleMessage("My Account"),
@@ -43,6 +45,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "activityGoalsSettings": MessageLookupByLibrary.simpleMessage(
       "Activity & Goals Settings",
     ),
+    "addressError": MessageLookupByLibrary.simpleMessage(
+      "Error getting address",
+    ),
+    "addressNotFound": MessageLookupByLibrary.simpleMessage(
+      "No nearby address found",
+    ),
+    "advancedFilters": MessageLookupByLibrary.simpleMessage("Advanced Filters"),
+    "advancedFiltersDesc": MessageLookupByLibrary.simpleMessage(
+      "By type, distance, availability",
+    ),
     "appSettings": MessageLookupByLibrary.simpleMessage("App Settings"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "backToLogin": MessageLookupByLibrary.simpleMessage("Back to Login"),
@@ -53,7 +65,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "chargeNow": MessageLookupByLibrary.simpleMessage("Charge Now"),
+    "chargingStations": MessageLookupByLibrary.simpleMessage(
+      "Charging Stations",
+    ),
     "chooseLanguage": MessageLookupByLibrary.simpleMessage("Choose Language"),
+    "comingSoon": MessageLookupByLibrary.simpleMessage("🚧 Coming Soon"),
+    "comingSoonDescription": MessageLookupByLibrary.simpleMessage(
+      "Soon we will provide you with the nearest charging stations around your current location",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
     "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
@@ -67,10 +86,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "1 point/100 = step",
     ),
     "conversionRate": MessageLookupByLibrary.simpleMessage("Conversion Rate"),
+    "convertingCoordinates": MessageLookupByLibrary.simpleMessage(
+      "Converting coordinates to address...",
+    ),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create Account"),
     "currentPassword": MessageLookupByLibrary.simpleMessage("Current Password"),
     "dailySteps": MessageLookupByLibrary.simpleMessage("Daily Steps Goal"),
     "dailyStepsGoal": MessageLookupByLibrary.simpleMessage("Daily Steps Goal"),
+    "determiningLocation": MessageLookupByLibrary.simpleMessage(
+      "Determining your location...",
+    ),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "emailOrUsername": MessageLookupByLibrary.simpleMessage(
@@ -91,12 +116,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please enter a valid email address",
     ),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("An error occurred"),
+    "featureInDevelopment": MessageLookupByLibrary.simpleMessage(
+      "Charging stations feature is under development",
+    ),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot Password?"),
     "great": MessageLookupByLibrary.simpleMessage("Great! You\'ve completed"),
     "height": MessageLookupByLibrary.simpleMessage("Height (cm)"),
     "heightCm": MessageLookupByLibrary.simpleMessage("Height (cm)"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "interactiveMap": MessageLookupByLibrary.simpleMessage("Interactive Map"),
+    "interactiveMapDesc": MessageLookupByLibrary.simpleMessage(
+      "View stations on map",
+    ),
     "invalidEmail": MessageLookupByLibrary.simpleMessage(
       "Invalid email address",
     ),
@@ -106,6 +138,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "languageChangedTo": MessageLookupByLibrary.simpleMessage(
       "Language changed to",
+    ),
+    "locationError": m1,
+    "locationPermissionDenied": MessageLookupByLibrary.simpleMessage(
+      "Location permission denied",
+    ),
+    "locationPermissionMessage": MessageLookupByLibrary.simpleMessage(
+      "Please allow the app to access your location to show nearby stations",
+    ),
+    "locationPermissionPermanentlyDenied": MessageLookupByLibrary.simpleMessage(
+      "Location permission permanently denied",
+    ),
+    "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "Location Permission Required",
+    ),
+    "locationSuccess": MessageLookupByLibrary.simpleMessage(
+      "Location determined successfully",
     ),
     "logActivity": MessageLookupByLibrary.simpleMessage("Log Activity"),
     "login": MessageLookupByLibrary.simpleMessage("Sign In"),
@@ -119,6 +167,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "myAccount": MessageLookupByLibrary.simpleMessage("My Account"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameRequired": MessageLookupByLibrary.simpleMessage("Name is required"),
+    "navigationDirections": MessageLookupByLibrary.simpleMessage(
+      "Navigation Directions",
+    ),
+    "navigationDirectionsDesc": MessageLookupByLibrary.simpleMessage(
+      "Best route to station",
+    ),
+    "nearbyStations": MessageLookupByLibrary.simpleMessage("Nearby Stations"),
+    "nearbyStationsDesc": MessageLookupByLibrary.simpleMessage(
+      "Show stations by distance",
+    ),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
     "noAccount": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account? ",
@@ -149,6 +207,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "receiveAlertsAndUpdates": MessageLookupByLibrary.simpleMessage(
       "Receive alerts and updates",
     ),
+    "refreshLocation": MessageLookupByLibrary.simpleMessage("Refresh Location"),
     "resetError": MessageLookupByLibrary.simpleMessage(
       "An error occurred while sending the reset link",
     ),
@@ -167,6 +226,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "An unexpected error occurred",
     ),
+    "upcomingFeatures": MessageLookupByLibrary.simpleMessage(
+      "Upcoming Features:",
+    ),
     "updateCurrentPassword": MessageLookupByLibrary.simpleMessage(
       "Update current password",
     ),
@@ -176,5 +238,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "weight": MessageLookupByLibrary.simpleMessage("Weight (kg)"),
     "weightKg": MessageLookupByLibrary.simpleMessage("Weight (kg)"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome Back"),
+    "yourCurrentLocation": MessageLookupByLibrary.simpleMessage(
+      "Your Current Location",
+    ),
   };
 }

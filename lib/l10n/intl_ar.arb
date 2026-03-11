@@ -115,6 +115,42 @@
   "interactiveMap": "خريطة تفاعلية",
   "interactiveMapDesc": "عرض المحطات على الخريطة",
   "navigationDirections": "اتجاهات الوصول",
-  "navigationDirectionsDesc": "أفضل طريق للمحطة"
+  "navigationDirectionsDesc": "أفضل طريق للمحطة",
+
+  "activityLogTitle": "سجل النشاط والإحصائيات",
+  "activityLogSubtitle": "تتبع تقدمك اليومي وإنجازاتك",
+  "totalSteps": "إجمالي\nالخطوات",
+  "pointsEarned": "نقاط مكتسبة",
+  "pointsSpent": "نقاط مستهلكة",
+  "daily": "يومي",
+  "weekly": "أسبوعي",
+  "monthly": "شهري",
+  "activityProgress": "تطور النشاط",
+  "transactionLog": "سجل التعاملات التفصيلي",
+  "pointUnit": "نقطة",
+  "txConvertedSteps": "تم تحويل {count} خطوة",
+  "@txConvertedSteps": {
+    "placeholders": { "count": {} }
+  },
+  "txChargingStation": "شحن في محطة حديقة الروابي",
+  "txRewardRedemption": "استبدال مكافأة - خصم شحن",
+  "chartLabelToday": "اليوم",
+  "chartLabelWednesday": "الأربعاء",
+  "chartLabelMonday": "الاثنين",
+  "chartLabelSunday": "الأحد",
+  "chartLabelSaturday": "السبت",
+  "chartLabelFriday": "الجمعة",
+  "chartLabelThursday": "الخميس",
+  "chartLabelWeek": "أسبوع {number}",
+  "@chartLabelWeek": {
+    "placeholders": { "number": {} }
+  },
+  "chartLabelJanuary": "يناير",
+  "chartLabelFebruary": "فبراير",
+  "chartLabelMarch": "مارس",
+  "chartLabelApril": "أبريل",
+  "chartLabelMay": "مايو",
+  "chartLabelJune": "يونيو",
+  "chartLabelJuly": "يوليو"
 
 }

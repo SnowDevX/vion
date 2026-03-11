@@ -25,6 +25,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(error) => "Location error: ${error}";
 
+  static String m2(number) => "Week ${number}";
+
+  static String m3(count) => "Converted ${count} steps";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "account": MessageLookupByLibrary.simpleMessage("My Account"),
@@ -44,6 +48,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "activityGoalsSettings": MessageLookupByLibrary.simpleMessage(
       "Activity & Goals Settings",
+    ),
+    "activityLogSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Track your daily progress and achievements",
+    ),
+    "activityLogTitle": MessageLookupByLibrary.simpleMessage(
+      "Activity Log & Statistics",
+    ),
+    "activityProgress": MessageLookupByLibrary.simpleMessage(
+      "Activity Progress",
     ),
     "addressError": MessageLookupByLibrary.simpleMessage(
       "Error getting address",
@@ -241,5 +254,37 @@ class MessageLookup extends MessageLookupByLibrary {
     "yourCurrentLocation": MessageLookupByLibrary.simpleMessage(
       "Your Current Location",
     ),
+    "chartLabelApril": MessageLookupByLibrary.simpleMessage("Apr"),
+    "chartLabelFebruary": MessageLookupByLibrary.simpleMessage("Feb"),
+    "chartLabelFriday": MessageLookupByLibrary.simpleMessage("Fri"),
+    "chartLabelJanuary": MessageLookupByLibrary.simpleMessage("Jan"),
+    "chartLabelJuly": MessageLookupByLibrary.simpleMessage("Jul"),
+    "chartLabelJune": MessageLookupByLibrary.simpleMessage("Jun"),
+    "chartLabelMarch": MessageLookupByLibrary.simpleMessage("Mar"),
+    "chartLabelMay": MessageLookupByLibrary.simpleMessage("May"),
+    "chartLabelMonday": MessageLookupByLibrary.simpleMessage("Mon"),
+    "chartLabelSaturday": MessageLookupByLibrary.simpleMessage("Sat"),
+    "chartLabelSunday": MessageLookupByLibrary.simpleMessage("Sun"),
+    "chartLabelThursday": MessageLookupByLibrary.simpleMessage("Thu"),
+    "chartLabelToday": MessageLookupByLibrary.simpleMessage("Today"),
+    "chartLabelWeek": m2,
+    "chartLabelWednesday": MessageLookupByLibrary.simpleMessage("Wed"),
+    "daily": MessageLookupByLibrary.simpleMessage("Daily"),
+    "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
+    "pointUnit": MessageLookupByLibrary.simpleMessage("point"),
+    "pointsEarned": MessageLookupByLibrary.simpleMessage("Points Earned"),
+    "pointsSpent": MessageLookupByLibrary.simpleMessage("Points Spent"),
+    "totalSteps": MessageLookupByLibrary.simpleMessage("Total\nSteps"),
+    "transactionLog": MessageLookupByLibrary.simpleMessage(
+      "Detailed Transaction Log",
+    ),
+    "txChargingStation": MessageLookupByLibrary.simpleMessage(
+      "Charged at Al-Rawabi Park station",
+    ),
+    "txConvertedSteps": m3,
+    "txRewardRedemption": MessageLookupByLibrary.simpleMessage(
+      "Redeemed reward - Charging discount",
+    ),
+    "weekly": MessageLookupByLibrary.simpleMessage("Weekly"),
   };
 }

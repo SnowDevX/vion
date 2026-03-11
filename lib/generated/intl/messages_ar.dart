@@ -24,6 +24,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(error) => "خطأ في تحديد الموقع: ${error}";
 
+  static String m2(number) => "أسبوع ${number}";
+
+  static String m3(count) => "تم تحويل ${count} خطوة";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "account": MessageLookupByLibrary.simpleMessage("حسابي"),
@@ -42,6 +46,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "activityGoalsSettings": MessageLookupByLibrary.simpleMessage(
       "إعدادات النشاط والأهداف",
     ),
+    "activityLogSubtitle": MessageLookupByLibrary.simpleMessage(
+      "تتبع تقدمك اليومي وإنجازاتك",
+    ),
+    "activityLogTitle": MessageLookupByLibrary.simpleMessage(
+      "سجل النشاط والإحصائيات",
+    ),
+    "activityProgress": MessageLookupByLibrary.simpleMessage("تطور النشاط"),
     "addressError": MessageLookupByLibrary.simpleMessage(
       "خطأ في تحديد العنوان",
     ),
@@ -239,5 +250,37 @@ class MessageLookup extends MessageLookupByLibrary {
     "weightKg": MessageLookupByLibrary.simpleMessage("الوزن (كجم)"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("أهلاً بعودتك"),
     "yourCurrentLocation": MessageLookupByLibrary.simpleMessage("موقعك الحالي"),
+    "chartLabelApril": MessageLookupByLibrary.simpleMessage("أبريل"),
+    "chartLabelFebruary": MessageLookupByLibrary.simpleMessage("فبراير"),
+    "chartLabelFriday": MessageLookupByLibrary.simpleMessage("الجمعة"),
+    "chartLabelJanuary": MessageLookupByLibrary.simpleMessage("يناير"),
+    "chartLabelJuly": MessageLookupByLibrary.simpleMessage("يوليو"),
+    "chartLabelJune": MessageLookupByLibrary.simpleMessage("يونيو"),
+    "chartLabelMarch": MessageLookupByLibrary.simpleMessage("مارس"),
+    "chartLabelMay": MessageLookupByLibrary.simpleMessage("مايو"),
+    "chartLabelMonday": MessageLookupByLibrary.simpleMessage("الاثنين"),
+    "chartLabelSaturday": MessageLookupByLibrary.simpleMessage("السبت"),
+    "chartLabelSunday": MessageLookupByLibrary.simpleMessage("الأحد"),
+    "chartLabelThursday": MessageLookupByLibrary.simpleMessage("الخميس"),
+    "chartLabelToday": MessageLookupByLibrary.simpleMessage("اليوم"),
+    "chartLabelWeek": m2,
+    "chartLabelWednesday": MessageLookupByLibrary.simpleMessage("الأربعاء"),
+    "daily": MessageLookupByLibrary.simpleMessage("يومي"),
+    "monthly": MessageLookupByLibrary.simpleMessage("شهري"),
+    "pointUnit": MessageLookupByLibrary.simpleMessage("نقطة"),
+    "pointsEarned": MessageLookupByLibrary.simpleMessage("نقاط مكتسبة"),
+    "pointsSpent": MessageLookupByLibrary.simpleMessage("نقاط مستهلكة"),
+    "totalSteps": MessageLookupByLibrary.simpleMessage("إجمالي\nالخطوات"),
+    "transactionLog": MessageLookupByLibrary.simpleMessage(
+      "سجل التعاملات التفصيلي",
+    ),
+    "txChargingStation": MessageLookupByLibrary.simpleMessage(
+      "شحن في محطة حديقة الروابي",
+    ),
+    "txConvertedSteps": m3,
+    "txRewardRedemption": MessageLookupByLibrary.simpleMessage(
+      "استبدال مكافأة - خصم شحن",
+    ),
+    "weekly": MessageLookupByLibrary.simpleMessage("أسبوعي"),
   };
 }

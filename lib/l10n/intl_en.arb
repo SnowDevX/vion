@@ -116,5 +116,42 @@
   "interactiveMap": "Interactive Map",
   "interactiveMapDesc": "View stations on map",
   "navigationDirections": "Navigation Directions",
-  "navigationDirectionsDesc": "Best route to station"
+  "navigationDirectionsDesc": "Best route to station",
+
+  "activityLogTitle": "Activity Log & Statistics",
+  "activityLogSubtitle": "Track your daily progress and achievements",
+  "totalSteps": "Total\nSteps",
+  "pointsEarned": "Points Earned",
+  "pointsSpent": "Points Spent",
+  "daily": "Daily",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "activityProgress": "Activity Progress",
+  "transactionLog": "Detailed Transaction Log",
+  "pointUnit": "point",
+  "txConvertedSteps": "Converted {count} steps",
+  "@txConvertedSteps": {
+    "placeholders": { "count": {} }
+  },
+  "txChargingStation": "Charged at Al-Rawabi Park station",
+  "txRewardRedemption": "Redeemed reward - Charging discount",
+  "chartLabelToday": "Today",
+  "chartLabelWednesday": "Wed",
+  "chartLabelMonday": "Mon",
+  "chartLabelSunday": "Sun",
+  "chartLabelSaturday": "Sat",
+  "chartLabelFriday": "Fri",
+  "chartLabelThursday": "Thu",
+  "chartLabelWeek": "Week {number}",
+  "@chartLabelWeek": {
+    "placeholders": { "number": {} }
+  },
+  "chartLabelJanuary": "Jan",
+  "chartLabelFebruary": "Feb",
+  "chartLabelMarch": "Mar",
+  "chartLabelApril": "Apr",
+  "chartLabelMay": "May",
+  "chartLabelJune": "Jun",
+  "chartLabelJuly": "Jul"
+
 }

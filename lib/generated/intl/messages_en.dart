@@ -23,15 +23,21 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m0(percent) =>
       "Great! You\'ve completed ${percent}% of your daily goal";
 
-  static String m1(points) =>
+  static String m1(number) => "Week ${number}";
+
+  static String m2(points) =>
       "You don\'t have enough points to redeem this reward. You need ${points} more points.";
 
-  static String m2(error) => "Location error: ${error}";
+  static String m3(error) => "Location error: ${error}";
 
-  static String m3(points, reward) =>
+  static String m4(points) => "You need ${points} points for this reward";
+
+  static String m5(points, reward) =>
       "Are you sure you want to redeem ${points} points for ${reward}?";
 
-  static String m4(reward) => "Reward \"${reward}\" redeemed successfully";
+  static String m6(reward) => "Reward \"${reward}\" redeemed successfully";
+
+  static String m7(count) => "Converted ${count} steps";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -52,6 +58,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "activityGoalsSettings": MessageLookupByLibrary.simpleMessage(
       "Activity & Goals Settings",
+    ),
+    "activityLogSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Track your daily progress and achievements",
+    ),
+    "activityLogTitle": MessageLookupByLibrary.simpleMessage(
+      "Activity Log & Statistics",
+    ),
+    "activityProgress": MessageLookupByLibrary.simpleMessage(
+      "Activity Progress",
     ),
     "addressError": MessageLookupByLibrary.simpleMessage(
       "Error getting address",
@@ -83,6 +98,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "chargingStations": MessageLookupByLibrary.simpleMessage(
       "Charging Stations",
     ),
+    "chartLabelApril": MessageLookupByLibrary.simpleMessage("Apr"),
+    "chartLabelFebruary": MessageLookupByLibrary.simpleMessage("Feb"),
+    "chartLabelFriday": MessageLookupByLibrary.simpleMessage("Fri"),
+    "chartLabelJanuary": MessageLookupByLibrary.simpleMessage("Jan"),
+    "chartLabelJuly": MessageLookupByLibrary.simpleMessage("Jul"),
+    "chartLabelJune": MessageLookupByLibrary.simpleMessage("Jun"),
+    "chartLabelMarch": MessageLookupByLibrary.simpleMessage("Mar"),
+    "chartLabelMay": MessageLookupByLibrary.simpleMessage("May"),
+    "chartLabelMonday": MessageLookupByLibrary.simpleMessage("Mon"),
+    "chartLabelSaturday": MessageLookupByLibrary.simpleMessage("Sat"),
+    "chartLabelSunday": MessageLookupByLibrary.simpleMessage("Sun"),
+    "chartLabelThursday": MessageLookupByLibrary.simpleMessage("Thu"),
+    "chartLabelToday": MessageLookupByLibrary.simpleMessage("Today"),
+    "chartLabelWednesday": MessageLookupByLibrary.simpleMessage("Wed"),
+    "chartLabelWeek": m1,
     "chooseLanguage": MessageLookupByLibrary.simpleMessage("Choose Language"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("🚧 Coming Soon"),
     "comingSoonDescription": MessageLookupByLibrary.simpleMessage(
@@ -107,6 +137,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create Account"),
     "currentPassword": MessageLookupByLibrary.simpleMessage("Current Password"),
+    "daily": MessageLookupByLibrary.simpleMessage("Daily"),
     "dailySteps": MessageLookupByLibrary.simpleMessage("Daily Steps Goal"),
     "dailyStepsGoal": MessageLookupByLibrary.simpleMessage("Daily Steps Goal"),
     "determiningLocation": MessageLookupByLibrary.simpleMessage(
@@ -157,7 +188,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "insufficientPoints": MessageLookupByLibrary.simpleMessage(
       "Insufficient Points",
     ),
-    "insufficientPointsMsg": m1,
+    "insufficientPointsMsg": m2,
     "interactiveMap": MessageLookupByLibrary.simpleMessage("Interactive Map"),
     "interactiveMapDesc": MessageLookupByLibrary.simpleMessage(
       "View stations on map",
@@ -174,7 +205,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "languageChangedTo": MessageLookupByLibrary.simpleMessage(
       "Language changed to",
     ),
-    "locationError": m2,
+    "locationError": m3,
     "locationPermissionDenied": MessageLookupByLibrary.simpleMessage(
       "Location permission denied",
     ),
@@ -199,6 +230,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirm": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to logout?",
     ),
+    "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "myAccount": MessageLookupByLibrary.simpleMessage("My Account"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameRequired": MessageLookupByLibrary.simpleMessage("Name is required"),
@@ -212,6 +244,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "nearbyStationsDesc": MessageLookupByLibrary.simpleMessage(
       "Show stations by distance",
     ),
+    "needPoints": m4,
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
     "noAccount": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account? ",
@@ -221,6 +254,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ofYourDailyGoal": MessageLookupByLibrary.simpleMessage(
       "of your daily goal",
     ),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "passwordMinLength": MessageLookupByLibrary.simpleMessage(
       "Password must be at least 6 characters",
@@ -234,8 +268,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseEnterEmail": MessageLookupByLibrary.simpleMessage(
       "Please enter your email",
     ),
+    "pointUnit": MessageLookupByLibrary.simpleMessage("point"),
     "points": MessageLookupByLibrary.simpleMessage("points"),
     "pointsCount": MessageLookupByLibrary.simpleMessage("156 points ✓"),
+    "pointsEarned": MessageLookupByLibrary.simpleMessage("Points Earned"),
+    "pointsSpent": MessageLookupByLibrary.simpleMessage("Points Spent"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
       "Privacy & Terms of Use",
     ),
@@ -244,12 +281,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Receive alerts and updates",
     ),
     "redeem": MessageLookupByLibrary.simpleMessage("Redeem"),
-    "redeemConfirmation": m3,
-    "redeemSuccess": m4,
+    "redeemConfirmation": m5,
+    "redeemError": MessageLookupByLibrary.simpleMessage(
+      "An error occurred during redemption",
+    ),
+    "redeemSuccess": m6,
     "redeemYourPoints": MessageLookupByLibrary.simpleMessage(
       "Redeem your points for exclusive rewards",
     ),
     "refreshLocation": MessageLookupByLibrary.simpleMessage("Refresh Location"),
+    "replaceFirst": MessageLookupByLibrary.simpleMessage("Replace First"),
     "resetError": MessageLookupByLibrary.simpleMessage(
       "An error occurred while sending the reset link",
     ),
@@ -267,6 +308,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Support & Policies",
     ),
     "totalEnergy": MessageLookupByLibrary.simpleMessage("Total Energy"),
+    "totalSteps": MessageLookupByLibrary.simpleMessage("Total\nSteps"),
+    "transactionLog": MessageLookupByLibrary.simpleMessage(
+      "Detailed Transaction Log",
+    ),
+    "txChargingStation": MessageLookupByLibrary.simpleMessage(
+      "Charged at Al-Rawabi Park station",
+    ),
+    "txConvertedSteps": m7,
+    "txRewardRedemption": MessageLookupByLibrary.simpleMessage(
+      "Redeemed reward - Charging discount",
+    ),
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "An unexpected error occurred",
     ),
@@ -279,6 +331,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userNotFound": MessageLookupByLibrary.simpleMessage(
       "No account registered with this email",
     ),
+    "weekly": MessageLookupByLibrary.simpleMessage("Weekly"),
     "weight": MessageLookupByLibrary.simpleMessage("Weight (kg)"),
     "weightKg": MessageLookupByLibrary.simpleMessage("Weight (kg)"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome Back"),

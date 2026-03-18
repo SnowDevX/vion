@@ -20,12 +20,12 @@ class _RewardsPageState extends State<RewardsPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F1A17),
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(context, lang),
       body: _buildBody(context, lang),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, S lang) {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -33,9 +33,9 @@ class _RewardsPageState extends State<RewardsPage> {
         icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: const Text(
-        'المكافآت',
-        style: TextStyle(color: Colors.white, fontSize: 20),
+      title: Text(
+        lang.rewards,
+        style: const TextStyle(color: Colors.white, fontSize: 20),
       ),
       centerTitle: true,
     );
@@ -52,7 +52,7 @@ class _RewardsPageState extends State<RewardsPage> {
           _buildPointsBalance(lang),
           const SizedBox(height: 25),
           _buildRewardsList(context, lang),
-          const SizedBox(height: 30), // ✅ مسافة إضافية في النهاية
+          const SizedBox(height: 30),
         ],
       ),
     );
@@ -129,14 +129,14 @@ class _RewardsPageState extends State<RewardsPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'رصيدك المتاح للاستبدال',
+                    lang.availableBalance,
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
                     ),
                   ),
                   Text(
-                    '$points نقطة',
+                    '$points ${lang.points}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -155,41 +155,42 @@ class _RewardsPageState extends State<RewardsPage> {
   Widget _buildRewardsList(BuildContext context, S lang) {
     List<RewardItem> rewards = [
       RewardItem(
-        title: 'شحن مجاني - 30 دقيقة',
-        description: 'حصل على 30 دقيقة شحن مجاني',
+        title: lang.freeCharging30min,
+        description: lang.freeChargingDesc,
         points: 50,
         icon: Icons.ev_station,
       ),
       RewardItem(
-        title: 'خصم 10% على الرحلة',
-        description: 'كوبون خصم صالح للاستخدام مرة واحدة',
+        title: lang.discount10Percent,
+        description: lang.discountDesc,
         points: 100,
         icon: Icons.percent,
       ),
       RewardItem(
-        title: 'باقة انترنت 1 جيجا',
-        description: 'هدية بيانات للهاتف المحمول',
+        title: lang.internet1GB,
+        description: lang.internetDesc,
         points: 150,
         icon: Icons.wifi,
       ),
       RewardItem(
-        title: 'غسيل سيارة احترافي',
-        description: 'غسيل كامل للسيارة',
+        title: lang.freeCarWash,
+        description: lang.carWashDesc,
         points: 500,
         icon: Icons.local_car_wash,
       ),
     ];
 
     return ListView.builder(
-      shrinkWrap: true, // ✅ مهم جداً لمنع التجاوز
-      physics: const NeverScrollableScrollPhysics(), // ✅ لمنع التمرير المزدوج
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: rewards.length,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12), // ✅ مسافة بين الكروت
+          padding: const EdgeInsets.only(bottom: 12),
           child: RewardCard(
             reward: rewards[index],
             backend: _backend,
+            lang: lang,
           ),
         );
       },
@@ -216,11 +217,13 @@ class RewardItem {
 class RewardCard extends StatefulWidget {
   final RewardItem reward;
   final RewardsBackend backend;
+  final S lang;
 
   const RewardCard({
     super.key,
     required this.reward,
     required this.backend,
+    required this.lang,
   });
 
   @override
@@ -288,9 +291,9 @@ class _RewardCardState extends State<RewardCard> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text(
-              'استبدال',
-              style: TextStyle(
+            child: Text(
+              widget.lang.redeem,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
@@ -320,7 +323,7 @@ class _RewardCardState extends State<RewardCard> {
         ),
         const SizedBox(height: 4),
         Text(
-          '${widget.reward.points} نقطة',
+          '${widget.reward.points} ${widget.lang.points}',
           style: const TextStyle(
             color: Colors.tealAccent,
             fontWeight: FontWeight.bold,
@@ -346,20 +349,20 @@ class _RewardCardState extends State<RewardCard> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF182A25),
-        title: const Text(
-          'تأكيد الاستبدال',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          widget.lang.confirmRedeem,
+          style: const TextStyle(color: Colors.white),
         ),
         content: Text(
-          'هل أنت متأكد من استبدال ${widget.reward.points} نقطة مقابل ${widget.reward.title}؟',
+          widget.lang.redeemConfirmation(widget.reward.points, widget.reward.title),
           style: const TextStyle(color: Colors.white70),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'إلغاء',
-              style: TextStyle(color: Colors.grey),
+            child: Text(
+              widget.lang.cancel,
+              style: const TextStyle(color: Colors.grey),
             ),
           ),
           ElevatedButton(
@@ -371,7 +374,7 @@ class _RewardCardState extends State<RewardCard> {
               backgroundColor: Colors.tealAccent,
               foregroundColor: Colors.black,
             ),
-            child: const Text('تأكيد'),
+            child: Text(widget.lang.confirm),
           ),
         ],
       ),
@@ -383,12 +386,12 @@ class _RewardCardState extends State<RewardCard> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF182A25),
-        title: const Text(
-          'رصيد غير كافي',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          widget.lang.insufficientPoints,
+          style: const TextStyle(color: Colors.white),
         ),
         content: Text(
-          'تحتاج ${widget.reward.points} نقطة لهذه المكافأة',
+          widget.lang.needPoints(widget.reward.points),
           style: const TextStyle(color: Colors.white70),
         ),
         actions: [
@@ -398,7 +401,7 @@ class _RewardCardState extends State<RewardCard> {
               backgroundColor: Colors.tealAccent,
               foregroundColor: Colors.black,
             ),
-            child: const Text('حسناً'),
+            child: Text(widget.lang.ok),
           ),
         ],
       ),
@@ -428,7 +431,7 @@ class _RewardCardState extends State<RewardCard> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'تم استبدال ${widget.reward.title} بنجاح',
+          widget.lang.redeemSuccess(widget.reward.title),
           style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.tealAccent,
@@ -443,7 +446,10 @@ class _RewardCardState extends State<RewardCard> {
   void _showErrorMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('حدث خطأ في عملية الاستبدال'),
+        content: Text(
+          widget.lang.redeemError,
+          style: const TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(

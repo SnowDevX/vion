@@ -22,15 +22,21 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(percent) => "رائع! لقد قطعت ${percent}% من هدفك اليومي";
 
-  static String m1(points) =>
+  static String m1(number) => "أسبوع ${number}";
+
+  static String m2(points) =>
       "ليس لديك نقاط كافية لاستبدال هذه المكافأة. تحتاج إلى ${points} نقطة إضافية.";
 
-  static String m2(error) => "خطأ في تحديد الموقع: ${error}";
+  static String m3(error) => "خطأ في تحديد الموقع: ${error}";
 
-  static String m3(points, reward) =>
+  static String m4(points) => "تحتاج ${points} نقطة لهذه المكافأة";
+
+  static String m5(points, reward) =>
       "هل أنت متأكد من استبدال ${points} نقطة مقابل ${reward}؟";
 
-  static String m4(reward) => "تم استبدال المكافأة \"${reward}\" بنجاح";
+  static String m6(reward) => "تم استبدال المكافأة \"${reward}\" بنجاح";
+
+  static String m7(count) => "تم تحويل ${count} خطوة";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -50,6 +56,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "activityGoalsSettings": MessageLookupByLibrary.simpleMessage(
       "إعدادات النشاط والأهداف",
     ),
+    "activityLogSubtitle": MessageLookupByLibrary.simpleMessage(
+      "تتبع تقدمك اليومي وإنجازاتك",
+    ),
+    "activityLogTitle": MessageLookupByLibrary.simpleMessage(
+      "سجل النشاط والإحصائيات",
+    ),
+    "activityProgress": MessageLookupByLibrary.simpleMessage("تطور النشاط"),
     "addressError": MessageLookupByLibrary.simpleMessage(
       "خطأ في تحديد العنوان",
     ),
@@ -78,6 +91,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
     "chargeNow": MessageLookupByLibrary.simpleMessage("اشحن الآن"),
     "chargingStations": MessageLookupByLibrary.simpleMessage("محطات الشحن"),
+    "chartLabelApril": MessageLookupByLibrary.simpleMessage("أبريل"),
+    "chartLabelFebruary": MessageLookupByLibrary.simpleMessage("فبراير"),
+    "chartLabelFriday": MessageLookupByLibrary.simpleMessage("الجمعة"),
+    "chartLabelJanuary": MessageLookupByLibrary.simpleMessage("يناير"),
+    "chartLabelJuly": MessageLookupByLibrary.simpleMessage("يوليو"),
+    "chartLabelJune": MessageLookupByLibrary.simpleMessage("يونيو"),
+    "chartLabelMarch": MessageLookupByLibrary.simpleMessage("مارس"),
+    "chartLabelMay": MessageLookupByLibrary.simpleMessage("مايو"),
+    "chartLabelMonday": MessageLookupByLibrary.simpleMessage("الاثنين"),
+    "chartLabelSaturday": MessageLookupByLibrary.simpleMessage("السبت"),
+    "chartLabelSunday": MessageLookupByLibrary.simpleMessage("الأحد"),
+    "chartLabelThursday": MessageLookupByLibrary.simpleMessage("الخميس"),
+    "chartLabelToday": MessageLookupByLibrary.simpleMessage("اليوم"),
+    "chartLabelWednesday": MessageLookupByLibrary.simpleMessage("الأربعاء"),
+    "chartLabelWeek": m1,
     "chooseLanguage": MessageLookupByLibrary.simpleMessage("اختر اللغة"),
     "comingSoon": MessageLookupByLibrary.simpleMessage("🚧 قريباً"),
     "comingSoonDescription": MessageLookupByLibrary.simpleMessage(
@@ -106,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "currentPassword": MessageLookupByLibrary.simpleMessage(
       "كلمة المرور الحالية",
     ),
+    "daily": MessageLookupByLibrary.simpleMessage("يومي"),
     "dailySteps": MessageLookupByLibrary.simpleMessage("الهدف اليومي للخطوات"),
     "dailyStepsGoal": MessageLookupByLibrary.simpleMessage(
       "الهدف اليومي للخطوات",
@@ -160,7 +189,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "insufficientPoints": MessageLookupByLibrary.simpleMessage(
       "نقاط غير كافية",
     ),
-    "insufficientPointsMsg": m1,
+    "insufficientPointsMsg": m2,
     "interactiveMap": MessageLookupByLibrary.simpleMessage("خريطة تفاعلية"),
     "interactiveMapDesc": MessageLookupByLibrary.simpleMessage(
       "عرض المحطات على الخريطة",
@@ -179,7 +208,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "languageChangedTo": MessageLookupByLibrary.simpleMessage(
       "تم تغيير اللغة إلى",
     ),
-    "locationError": m2,
+    "locationError": m3,
     "locationPermissionDenied": MessageLookupByLibrary.simpleMessage(
       "تم رفض صلاحية الوصول للموقع",
     ),
@@ -204,6 +233,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirm": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من رغبتك في تسجيل الخروج؟",
     ),
+    "monthly": MessageLookupByLibrary.simpleMessage("شهري"),
     "myAccount": MessageLookupByLibrary.simpleMessage("حسابي"),
     "name": MessageLookupByLibrary.simpleMessage("الاسم"),
     "nameRequired": MessageLookupByLibrary.simpleMessage("الاسم مطلوب"),
@@ -219,11 +249,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "nearbyStationsDesc": MessageLookupByLibrary.simpleMessage(
       "عرض المحطات حسب المسافة",
     ),
+    "needPoints": m4,
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "noAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟ "),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "ofGoal": MessageLookupByLibrary.simpleMessage("من الهدف"),
     "ofYourDailyGoal": MessageLookupByLibrary.simpleMessage("من هدفك اليومي"),
+    "ok": MessageLookupByLibrary.simpleMessage("حسناً"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "passwordMinLength": MessageLookupByLibrary.simpleMessage(
       "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
@@ -237,19 +269,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseEnterEmail": MessageLookupByLibrary.simpleMessage(
       "الرجاء إدخال البريد الإلكتروني",
     ),
+    "pointUnit": MessageLookupByLibrary.simpleMessage("نقطة"),
     "points": MessageLookupByLibrary.simpleMessage("نقطة"),
     "pointsCount": MessageLookupByLibrary.simpleMessage("156 نقطة ✓"),
+    "pointsEarned": MessageLookupByLibrary.simpleMessage("نقاط مكتسبة"),
+    "pointsSpent": MessageLookupByLibrary.simpleMessage("نقاط مستهلكة"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
       "الخصوصية وسياسة الاستخدام",
     ),
     "profileHeader": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "redeem": MessageLookupByLibrary.simpleMessage("استبدال"),
-    "redeemConfirmation": m3,
-    "redeemSuccess": m4,
+    "redeemConfirmation": m5,
+    "redeemError": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ في عملية الاستبدال",
+    ),
+    "redeemSuccess": m6,
     "redeemYourPoints": MessageLookupByLibrary.simpleMessage(
       "استبدل نقاطك بمكافآت مميزة",
     ),
     "refreshLocation": MessageLookupByLibrary.simpleMessage("تحديث الموقع"),
+    "replaceFirst": MessageLookupByLibrary.simpleMessage("استبدل أولاً"),
     "resetError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ أثناء إرسال رابط إعادة التعيين",
     ),
@@ -269,6 +308,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "steps": MessageLookupByLibrary.simpleMessage("خطوات"),
     "supportPolicies": MessageLookupByLibrary.simpleMessage("الدعم والسياسات"),
     "totalEnergy": MessageLookupByLibrary.simpleMessage("إجمالي الطاقة"),
+    "totalSteps": MessageLookupByLibrary.simpleMessage("إجمالي\nالخطوات"),
+    "transactionLog": MessageLookupByLibrary.simpleMessage(
+      "سجل التعاملات التفصيلي",
+    ),
+    "txChargingStation": MessageLookupByLibrary.simpleMessage(
+      "شحن في محطة حديقة الروابي",
+    ),
+    "txConvertedSteps": m7,
+    "txRewardRedemption": MessageLookupByLibrary.simpleMessage(
+      "استبدال مكافأة - خصم شحن",
+    ),
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ غير متوقع",
     ),
@@ -281,6 +331,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "userNotFound": MessageLookupByLibrary.simpleMessage(
       "لا يوجد حساب مسجل بهذا البريد الإلكتروني",
     ),
+    "weekly": MessageLookupByLibrary.simpleMessage("أسبوعي"),
     "weight": MessageLookupByLibrary.simpleMessage("الوزن (كجم)"),
     "weightKg": MessageLookupByLibrary.simpleMessage("الوزن (كجم)"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("أهلاً بعودتك"),

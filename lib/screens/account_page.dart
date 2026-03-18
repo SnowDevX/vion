@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grandustionapp/generated/l10n.dart';
 import 'package:grandustionapp/providers/language_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grandustionapp/services/account_backend.dart'; // ✅ إضافة
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -13,6 +12,8 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  final AccountBackend _backend = AccountBackend(); // ✅ الباك إند
+
   // بيانات المستخدم
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -22,8 +23,12 @@ class _AccountPageState extends State<AccountPage> {
 
   bool _notificationsEnabled = true;
   bool _isLoading = true;
-  User? _currentUser;
-  Map<String, dynamic>? _userData;
+  
+  // ✅ بيانات المستخدم
+  int _userPoints = 0;
+  String? _photoURL;
+  String _userName = '';
+  String _userEmail = '';
 
   @override
   void initState() {
@@ -33,255 +38,109 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
+  // ✅ تحميل البيانات من الباك إند
   Future<void> _loadUserData() async {
     if (!mounted) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    print("=== بدء تحميل بيانات المستخدم ===");
-
-    try {
-      _currentUser = FirebaseAuth.instance.currentUser;
-
-      if (_currentUser != null) {
-        print(" UID: ${_currentUser!.uid}");
-        print(" Email من Auth: ${_currentUser!.email}");
-        print(" DisplayName من Auth: ${_currentUser!.displayName}");
-
-        print(" جلب البيانات من Firestore...");
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(_currentUser!.uid)
-            .get();
-
-        if (userDoc.exists && userDoc.data() != null) {
-          _userData = userDoc.data() as Map<String, dynamic>;
-
-          print(" وجدت بيانات في Firestore:");
-          print(" الاسم: ${_userData!['name']}");
-          print(" الإيميل: ${_userData!['email']}");
-          print(" الطول: ${_userData!['height']}");
-          print("  الوزن: ${_userData!['weight']}");
-
-          _nameController.text = _userData!['name']?.toString() ?? "ادخل اسمك";
-          _emailController.text =
-              _userData!['email']?.toString() ??
-              _currentUser!.email ??
-              "example@email.com";
-          _heightController.text = _userData!['height']?.toString() ?? "176";
-          _weightController.text = _userData!['weight']?.toString() ?? "82";
-          _stepsGoalController.text =
-              _userData!['dailyStepsGoal']?.toString() ?? "10000";
-          _notificationsEnabled = _userData!['notifications'] ?? true;
-
-          print(" تم تعيين البيانات:");
-          print("   الاسم: ${_nameController.text}");
-          print("   الإيميل: ${_emailController.text}");
-        } else {
-          print(" لا يوجد بيانات في Firestore، استخدام البيانات الافتراضية");
-          _nameController.text = _currentUser!.displayName ?? "زائر";
-          _emailController.text = _currentUser!.email ?? "غير مسجل";
-          _heightController.text = "176";
-          _weightController.text = "82";
-          _stepsGoalController.text = "10000";
-        }
-      } else {
-        print(" لا يوجد مستخدم مسجل دخول");
-        _nameController.text = "زائر";
-        _emailController.text = "غير مسجل";
-        _heightController.text = "176";
-        _weightController.text = "82";
-        _stepsGoalController.text = "10000";
-      }
-    } catch (e) {
-      print(" خطأ في تحميل البيانات: $e");
-      _nameController.text = "حدث خطأ";
-      _emailController.text = "error@example.com";
-      _heightController.text = "176";
-      _weightController.text = "82";
-      _stepsGoalController.text = "10000";
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-      print(" انتهى تحميل البيانات");
+    var result = await _backend.loadUserData();
+    
+    if (result['success'] && mounted) {
+      var data = result['data'];
+      
+      setState(() {
+        _nameController.text = data['name'];
+        _emailController.text = data['email'];
+        _heightController.text = data['height'].toString();
+        _weightController.text = data['weight'].toString();
+        _stepsGoalController.text = data['dailyStepsGoal'].toString();
+        _notificationsEnabled = data['notifications'];
+        _userPoints = data['points']; // ✅ النقاط هنا
+        _photoURL = data['photoURL'];
+        _userName = data['name'];
+        _userEmail = data['email'];
+        _isLoading = false;
+      });
+    } else {
+      setState(() => _isLoading = false);
     }
   }
 
-  // دالة لحفظ التعديلات في Firebase
+  // ✅ حفظ التغييرات
   Future<void> _saveProfileChanges() async {
-    if (_currentUser == null) return;
+    var result = await _backend.saveProfileChanges(
+      name: _nameController.text,
+      email: _emailController.text,
+      height: int.tryParse(_heightController.text) ?? 176,
+      weight: int.tryParse(_weightController.text) ?? 82,
+      dailyStepsGoal: int.tryParse(_stepsGoalController.text) ?? 10000,
+      notifications: _notificationsEnabled,
+    );
 
-    try {
-      if (_nameController.text != _currentUser!.displayName) {
-        await _currentUser!.updateDisplayName(_nameController.text);
-        print(" تم تحديث الاسم في Firebase Auth");
-      }
-
-      // تحديث البيانات في Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_currentUser!.uid)
-          .set({
-            'name': _nameController.text,
-            'email': _emailController.text,
-            'height': int.tryParse(_heightController.text) ?? 176,
-            'weight': int.tryParse(_weightController.text) ?? 82,
-            'dailyStepsGoal': int.tryParse(_stepsGoalController.text) ?? 10000,
-            'notifications': _notificationsEnabled,
-            'updatedAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
-
-      print(" تم حفظ البيانات في Firestore");
-
-      // إعادة تحميل البيانات
-      await _loadUserData();
-
-      // إظهار رسالة نجاح
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("تم حفظ التغييرات بنجاح"),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      print(" خطأ في Firebase Auth: ${e.message}");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("خطأ في المصادقة: ${e.message}"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      print(" خطأ عام: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("حدث خطأ في الحفظ: $e"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  // دالة لتغيير كلمة المرور
-  Future<void> _changePassword(
-    String currentPassword,
-    String newPassword,
-  ) async {
-    if (_currentUser == null || _currentUser!.email == null) return;
-
-    try {
-      // إعادة المصادقة
-      AuthCredential credential = EmailAuthProvider.credential(
-        email: _currentUser!.email!,
-        password: currentPassword,
-      );
-
-      await _currentUser!.reauthenticateWithCredential(credential);
-      await _currentUser!.updatePassword(newPassword);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("تم تغيير كلمة المرور بنجاح"),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      String errorMessage = "فشل تغيير كلمة المرور";
-      if (e.code == 'wrong-password') {
-        errorMessage = "كلمة المرور الحالية غير صحيحة";
-      } else if (e.code == 'weak-password') {
-        errorMessage = "كلمة المرور الجديدة ضعيفة";
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
-  // دالة تسجيل الخروج
-  Future<void> _logout() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("تم تسجيل الخروج بنجاح"),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (e) {
-      print("❌ خطأ في تسجيل الخروج: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("خطأ في تسجيل الخروج: $e"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  // دالة لفحص البيانات (للتشخيص)
-  Future<void> _debugCheckData() async {
-    print("=== فحص بيانات المستخدم ===");
-
-    User? user = FirebaseAuth.instance.currentUser;
-    print("1. Firebase Auth:");
-    print("   - UID: ${user?.uid}");
-    print("   - Email: ${user?.email}");
-    print("   - DisplayName: ${user?.displayName}");
-
-    if (user != null) {
-      DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (doc.exists) {
-        print("2. Firestore Data:");
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        data.forEach((key, value) {
-          print("   - $key: $value");
-        });
-      } else {
-        print("2. لا يوجد مستند في Firestore!");
-      }
-    }
-
-    print("3. الـ Controllers المحلية:");
-    print("   - Name: ${_nameController.text}");
-    print("   - Email: ${_emailController.text}");
-    print("   - Height: ${_heightController.text}");
-    print("   - Weight: ${_weightController.text}");
-
-    if (mounted) {
+    if (result['success'] && mounted) {
+      await _loadUserData(); // إعادة تحميل البيانات
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("تم فحص البيانات، انظر الـ console"),
-          backgroundColor: Colors.tealAccent,
+          content: const Text("تم حفظ التغييرات بنجاح"),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("خطأ: ${result['error']}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // ✅ تغيير كلمة المرور
+  Future<void> _changePassword(String currentPassword, String newPassword) async {
+    var result = await _backend.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    );
+
+    if (result['success'] && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("تم تغيير كلمة المرور بنجاح"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error']),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // ✅ تسجيل الخروج
+  Future<void> _logout() async {
+    var result = await _backend.logout();
+
+    if (result['success'] && mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("تم تسجيل الخروج بنجاح"),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("خطأ في تسجيل الخروج: ${result['error']}"),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -350,7 +209,6 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                 ),
               ),
-              // زر تحديث البيانات
               IconButton(
                 icon: const Icon(Icons.refresh, color: Colors.tealAccent),
                 onPressed: _loadUserData,
@@ -366,7 +224,6 @@ class _AccountPageState extends State<AccountPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildProfileHeader(lang),
-
                 const SizedBox(height: 32),
                 _buildAccountManagementSection(lang, isRTL),
                 const SizedBox(height: 24),
@@ -410,9 +267,9 @@ class _AccountPageState extends State<AccountPage> {
               shape: BoxShape.circle,
               border: Border.all(color: Colors.tealAccent, width: 2),
             ),
-            child: _currentUser?.photoURL != null
+            child: _photoURL != null
                 ? CircleAvatar(
-                    backgroundImage: NetworkImage(_currentUser!.photoURL!),
+                    backgroundImage: NetworkImage(_photoURL!),
                     radius: 35,
                   )
                 : const Icon(Icons.person, color: Colors.tealAccent, size: 40),
@@ -422,7 +279,6 @@ class _AccountPageState extends State<AccountPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // الاسم - من Firebase
                 Text(
                   _nameController.text,
                   style: const TextStyle(
@@ -432,31 +288,16 @@ class _AccountPageState extends State<AccountPage> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // الإيميل - من Firebase
                 Text(
                   _emailController.text,
                   style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                 ),
                 const SizedBox(height: 12),
-                _buildEnergyPoints(lang),
+                _buildEnergyPoints(lang), // ✅ النقاط تظهر هنا
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildDebugButton() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: ElevatedButton(
-        onPressed: _debugCheckData,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue.withOpacity(0.1),
-          foregroundColor: Colors.blue,
-        ),
-        child: const Text("فحص بيانات Firebase"),
       ),
     );
   }
@@ -478,7 +319,7 @@ class _AccountPageState extends State<AccountPage> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "${_userData?['energyPoints'] ?? '2,340'} ",
+                  text: "$_userPoints ",
                   style: const TextStyle(
                     color: Colors.tealAccent,
                     fontSize: 16,

@@ -654,7 +654,7 @@ class S {
     return Intl.message(
       'Great! You\'ve completed $percent% of your daily goal',
       name: 'achievementMessage',
-      desc: 'Achievement message with percentage',
+      desc: '',
       args: [percent],
     );
   }
@@ -1216,6 +1216,236 @@ class S {
       name: 'insufficientPointsMsg',
       desc: '',
       args: [points],
+    );
+  }
+
+  /// `Activity Log & Statistics`
+  String get activityLogTitle {
+    return Intl.message(
+      'Activity Log & Statistics',
+      name: 'activityLogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track your daily progress and achievements`
+  String get activityLogSubtitle {
+    return Intl.message(
+      'Track your daily progress and achievements',
+      name: 'activityLogSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total\nSteps`
+  String get totalSteps {
+    return Intl.message('Total\nSteps', name: 'totalSteps', desc: '', args: []);
+  }
+
+  /// `Points Earned`
+  String get pointsEarned {
+    return Intl.message(
+      'Points Earned',
+      name: 'pointsEarned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Points Spent`
+  String get pointsSpent {
+    return Intl.message(
+      'Points Spent',
+      name: 'pointsSpent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily`
+  String get daily {
+    return Intl.message('Daily', name: 'daily', desc: '', args: []);
+  }
+
+  /// `Weekly`
+  String get weekly {
+    return Intl.message('Weekly', name: 'weekly', desc: '', args: []);
+  }
+
+  /// `Monthly`
+  String get monthly {
+    return Intl.message('Monthly', name: 'monthly', desc: '', args: []);
+  }
+
+  /// `Activity Progress`
+  String get activityProgress {
+    return Intl.message(
+      'Activity Progress',
+      name: 'activityProgress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Detailed Transaction Log`
+  String get transactionLog {
+    return Intl.message(
+      'Detailed Transaction Log',
+      name: 'transactionLog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `point`
+  String get pointUnit {
+    return Intl.message('point', name: 'pointUnit', desc: '', args: []);
+  }
+
+  /// `Converted {count} steps`
+  String txConvertedSteps(Object count) {
+    return Intl.message(
+      'Converted $count steps',
+      name: 'txConvertedSteps',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Charged at Al-Rawabi Park station`
+  String get txChargingStation {
+    return Intl.message(
+      'Charged at Al-Rawabi Park station',
+      name: 'txChargingStation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeemed reward - Charging discount`
+  String get txRewardRedemption {
+    return Intl.message(
+      'Redeemed reward - Charging discount',
+      name: 'txRewardRedemption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today`
+  String get chartLabelToday {
+    return Intl.message('Today', name: 'chartLabelToday', desc: '', args: []);
+  }
+
+  /// `Wed`
+  String get chartLabelWednesday {
+    return Intl.message('Wed', name: 'chartLabelWednesday', desc: '', args: []);
+  }
+
+  /// `Mon`
+  String get chartLabelMonday {
+    return Intl.message('Mon', name: 'chartLabelMonday', desc: '', args: []);
+  }
+
+  /// `Sun`
+  String get chartLabelSunday {
+    return Intl.message('Sun', name: 'chartLabelSunday', desc: '', args: []);
+  }
+
+  /// `Sat`
+  String get chartLabelSaturday {
+    return Intl.message('Sat', name: 'chartLabelSaturday', desc: '', args: []);
+  }
+
+  /// `Fri`
+  String get chartLabelFriday {
+    return Intl.message('Fri', name: 'chartLabelFriday', desc: '', args: []);
+  }
+
+  /// `Thu`
+  String get chartLabelThursday {
+    return Intl.message('Thu', name: 'chartLabelThursday', desc: '', args: []);
+  }
+
+  /// `Week {number}`
+  String chartLabelWeek(Object number) {
+    return Intl.message(
+      'Week $number',
+      name: 'chartLabelWeek',
+      desc: '',
+      args: [number],
+    );
+  }
+
+  /// `Jan`
+  String get chartLabelJanuary {
+    return Intl.message('Jan', name: 'chartLabelJanuary', desc: '', args: []);
+  }
+
+  /// `Feb`
+  String get chartLabelFebruary {
+    return Intl.message('Feb', name: 'chartLabelFebruary', desc: '', args: []);
+  }
+
+  /// `Mar`
+  String get chartLabelMarch {
+    return Intl.message('Mar', name: 'chartLabelMarch', desc: '', args: []);
+  }
+
+  /// `Apr`
+  String get chartLabelApril {
+    return Intl.message('Apr', name: 'chartLabelApril', desc: '', args: []);
+  }
+
+  /// `May`
+  String get chartLabelMay {
+    return Intl.message('May', name: 'chartLabelMay', desc: '', args: []);
+  }
+
+  /// `Jun`
+  String get chartLabelJune {
+    return Intl.message('Jun', name: 'chartLabelJune', desc: '', args: []);
+  }
+
+  /// `Jul`
+  String get chartLabelJuly {
+    return Intl.message('Jul', name: 'chartLabelJuly', desc: '', args: []);
+  }
+
+  /// `An error occurred during redemption`
+  String get redeemError {
+    return Intl.message(
+      'An error occurred during redemption',
+      name: 'redeemError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You need {points} points for this reward`
+  String needPoints(Object points) {
+    return Intl.message(
+      'You need $points points for this reward',
+      name: 'needPoints',
+      desc: '',
+      args: [points],
+    );
+  }
+
+  /// `OK`
+  String get ok {
+    return Intl.message('OK', name: 'ok', desc: '', args: []);
+  }
+
+  /// `Replace First`
+  String get replaceFirst {
+    return Intl.message(
+      'Replace First',
+      name: 'replaceFirst',
+      desc: '',
+      args: [],
     );
   }
 }

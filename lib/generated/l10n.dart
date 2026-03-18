@@ -1033,6 +1033,191 @@ class S {
       args: [],
     );
   }
+
+  /// `Save the changes`
+  String get savethechanges {
+    return Intl.message(
+      'Save the changes',
+      name: 'savethechanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GrandUs App`
+  String get appTitle {
+    return Intl.message('GrandUs App', name: 'appTitle', desc: '', args: []);
+  }
+
+  /// `Rewards Center`
+  String get rewardsCenter {
+    return Intl.message(
+      'Rewards Center',
+      name: 'rewardsCenter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeem your points for exclusive rewards`
+  String get redeemYourPoints {
+    return Intl.message(
+      'Redeem your points for exclusive rewards',
+      name: 'redeemYourPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available Balance`
+  String get availableBalance {
+    return Intl.message(
+      'Available Balance',
+      name: 'availableBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `points`
+  String get points {
+    return Intl.message('points', name: 'points', desc: '', args: []);
+  }
+
+  /// `Free Charging - 30 min`
+  String get freeCharging30min {
+    return Intl.message(
+      'Free Charging - 30 min',
+      name: 'freeCharging30min',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get 30 minutes of free charging`
+  String get freeChargingDesc {
+    return Intl.message(
+      'Get 30 minutes of free charging',
+      name: 'freeChargingDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `10% Trip Discount`
+  String get discount10Percent {
+    return Intl.message(
+      '10% Trip Discount',
+      name: 'discount10Percent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discount coupon valid for one-time use`
+  String get discountDesc {
+    return Intl.message(
+      'Discount coupon valid for one-time use',
+      name: 'discountDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1GB Internet Package`
+  String get internet1GB {
+    return Intl.message(
+      '1GB Internet Package',
+      name: 'internet1GB',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mobile data gift`
+  String get internetDesc {
+    return Intl.message(
+      'Mobile data gift',
+      name: 'internetDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free Car Wash`
+  String get freeCarWash {
+    return Intl.message(
+      'Free Car Wash',
+      name: 'freeCarWash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Voucher provided by our partners`
+  String get carWashDesc {
+    return Intl.message(
+      'Voucher provided by our partners',
+      name: 'carWashDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeem`
+  String get redeem {
+    return Intl.message('Redeem', name: 'redeem', desc: '', args: []);
+  }
+
+  /// `Confirm Redemption`
+  String get confirmRedeem {
+    return Intl.message(
+      'Confirm Redemption',
+      name: 'confirmRedeem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to redeem {points} points for {reward}?`
+  String redeemConfirmation(Object points, Object reward) {
+    return Intl.message(
+      'Are you sure you want to redeem $points points for $reward?',
+      name: 'redeemConfirmation',
+      desc: '',
+      args: [points, reward],
+    );
+  }
+
+  /// `Reward "{reward}" redeemed successfully`
+  String redeemSuccess(Object reward) {
+    return Intl.message(
+      'Reward "$reward" redeemed successfully',
+      name: 'redeemSuccess',
+      desc: '',
+      args: [reward],
+    );
+  }
+
+  /// `Insufficient Points`
+  String get insufficientPoints {
+    return Intl.message(
+      'Insufficient Points',
+      name: 'insufficientPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You don't have enough points to redeem this reward. You need {points} more points.`
+  String insufficientPointsMsg(Object points) {
+    return Intl.message(
+      'You don\'t have enough points to redeem this reward. You need $points more points.',
+      name: 'insufficientPointsMsg',
+      desc: '',
+      args: [points],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

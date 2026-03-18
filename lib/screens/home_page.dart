@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:grandustionapp/screens/account_page.dart';
 import 'package:grandustionapp/screens/charging_stations_page.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:grandustionapp/generated/l10n.dart';
 import 'activity_page.dart';
 import 'rewards_page.dart';
-import 'package:grandustionapp/generated/l10n.dart'; 
+import 'package:grandustionapp/components/home_components.dart';
+import 'package:grandustionapp/services/home_backend.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,414 +17,181 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  late PageController _pageController;
+  final HomeBackend _backend = HomeBackend();
+  bool _isLoading = false;
+  
+  bool _locationPermissionGranted = false;
+  bool _activityPermissionGranted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _requestAllPermissions();
+    _initializeApp();
+  }
+
+  // دالة تطلب الإذنين 
+  Future<void> _requestAllPermissions() async {
+    try {
+      // طلب إذن النشاط البدني
+      var activityStatus = await Permission.activityRecognition.status;
+      if (activityStatus.isDenied) {
+        activityStatus = await Permission.activityRecognition.request();
+      }
+      
+      // طلب إذن الموقع
+      var locationStatus = await Permission.location.status;
+      if (locationStatus.isDenied) {
+        locationStatus = await Permission.location.request();
+      }
+      
+      setState(() {
+        _activityPermissionGranted = activityStatus.isGranted;
+        _locationPermissionGranted = locationStatus.isGranted;
+      });
+      
+      print('✅ النشاط البدني: $_activityPermissionGranted');
+      print('✅ الموقع: $_locationPermissionGranted');
+      
+    } catch (e) {
+      print('خطأ في طلب الصلاحيات: $e');
+    }
+  }
+
+  Future<void> _initializeApp() async {
+    try {
+      setState(() => _isLoading = true);
+
+      await _backend.checkAndResetDailySteps();
+      await _backend.loadUserStats();
+      _backend.startPedometer(_onStepUpdate);
+
+      setState(() => _isLoading = false);
+    } catch (e) {
+      print('خطأ في التهيئة: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _onStepUpdate(int newSteps) async {
+    setState(() {
+      _backend.updateProgress(newSteps);
+    });
+    
+    await _backend.saveStepsLocally(newSteps);
+    await _backend.syncStepsToBackend(newSteps);
+    
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final double steps = 7848;
-    final double goal = 10000;
-    final double percent = steps / goal;
-    final lang = S.of(context)!; 
     final isRTL = Localizations.localeOf(context).languageCode == 'ar';
+
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: const Color(0xFF0F1A17),
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.tealAccent),
+        ),
+      );
+    }
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: const Color(0xFF0F1A17),
-        bottomNavigationBar: _buildBottomNavBar(context),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildConnectionStatus(lang),
-                const SizedBox(height: 40),
-                _buildProgressCircle(context, percent, steps, lang),
-                const SizedBox(height: 16),
-                _buildGoalPercentText(percent, lang),
-                const SizedBox(height: 40),
-                _buildEnergyPointsSection(lang),
-                const SizedBox(height: 30),
-                _buildButtons(lang),
-                const SizedBox(height: 30),
-                _buildAchievementBox(percent, lang),
-              ],
-            ),
-          ),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (index) => setState(() => _currentIndex = index),
+          children: [
+            _buildHomeContent(),
+            const ActivityPage(),
+            const RewardsPage(),
+            const AccountPage(),
+            const ChargingStationsPage(),
+          ],
         ),
+        bottomNavigationBar: _buildBottomNavBar(),
       ),
     );
   }
 
-  Widget _buildConnectionStatus(S lang) {
-    final isRTL = Localizations.localeOf(context).languageCode == 'ar';
-    
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Directionality(
-        textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
-        child: Row(
+  Widget _buildHomeContent() {
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A2522),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.tealAccent, width: 1),
+            const ConnectionStatus(),
+            
+            const SizedBox(height: 40),
+            ProgressCircle(
+              percent: _backend.todayProgress,
+              steps: _backend.steps.toDouble(),
+            ),
+            const SizedBox(height: 16),
+            GoalPercentText(percent: _backend.todayProgress),
+            const SizedBox(height: 40),
+            EnergyPointsSection(points: _backend.points),
+            const SizedBox(height: 30),
+            ActionButtons(
+              onChargeNow: () => _pageController.animateToPage(
+                4,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
               ),
-              child: Row(
-                children: [
-                  Text(
-                    lang.connected,
-                    style: const TextStyle(
-                      color: Colors.tealAccent,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(Icons.wifi, color: Colors.tealAccent[400], size: 18),
-                ],
+              onLogActivity: () => _pageController.animateToPage(
+                1,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
               ),
             ),
+            const SizedBox(height: 30),
+            AchievementBox(percent: _backend.todayProgress),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProgressCircle(BuildContext context, double percent, double steps, S lang) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: MediaQuery.of(context).size.width * 0.72,
-          height: MediaQuery.of(context).size.width * 0.72,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(102, 2, 61, 49),
-                blurRadius: 23,
-                spreadRadius: 6,
-              ),
-            ],
-          ),
-        ),
-        CircularPercentIndicator(
-          radius: MediaQuery.of(context).size.width * 0.35,
-          lineWidth: 16,
-          percent: percent.clamp(0.0, 1.0),
-          circularStrokeCap: CircularStrokeCap.round,
-          backgroundColor: Colors.grey.withOpacity(0.25),
-          linearGradient: const LinearGradient(
-            colors: [Color(0xFF00FF73), Color(0xFF01FDCB), Color(0xFF01ECF0)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          center: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                steps.toStringAsFixed(0),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black54,
-                      blurRadius: 8,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                lang.steps,
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                percent >= 1.0 ? lang.congratulationsGoalComplete : lang.keepWalking,
-                style: const TextStyle(
-                  color: Colors.tealAccent,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  Widget _buildBottomNavBar() {
+    final lang = S.of(context)!;
 
-  Widget _buildGoalPercentText(double percent, S lang) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.tealAccent.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
+      decoration: const BoxDecoration(
+        color: Color(0xFF0F1A17),
+        border: Border(top: BorderSide(color: Colors.grey, width: 0.5)),
       ),
-      child: Text(
-        "${(percent * 100).toStringAsFixed(0)}% ${lang.ofGoal}",
-        style: const TextStyle(
-          color: Colors.tealAccent,
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
+      child: BottomNavigationBar(
+        backgroundColor: Colors.transparent,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.tealAccent,
+        unselectedItemColor: Colors.grey,
+        elevation: 0,
+        currentIndex: _currentIndex,
+        onTap: (index) => _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
         ),
-      ),
-    );
-  }
-
-  Widget _buildEnergyPointsSection(S lang) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF182A25),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _buildConversionRate(lang),
-          const SizedBox(height: 16),
-          _buildPointsBalance(lang),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.home), label: lang.home),
+          BottomNavigationBarItem(icon: const Icon(Icons.flash_on), label: lang.activity),
+          BottomNavigationBarItem(icon: const Icon(Icons.card_giftcard), label: lang.rewards),
+          BottomNavigationBarItem(icon: const Icon(Icons.person), label: lang.myAccount),
+          BottomNavigationBarItem(icon: const Icon(Icons.ev_station), label: lang.chargingStations),
         ],
       ),
     );
   }
-
-  Widget _buildConversionRate(S lang) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF182A25),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            lang.conversionRate,
-            style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-          ),
-          Text(
-            lang.conversionFormula,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPointsBalance(S lang) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 34, 59, 52),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.tealAccent.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                lang.energyPointsBalance,
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.bolt, color: Colors.tealAccent, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    lang.pointsCount,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.tealAccent.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.check_circle,
-              color: Colors.tealAccent,
-              size: 24,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildButtons(S lang) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(left: 8),
-            height: 50,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.tealAccent,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 3,
-              ),
-              onPressed: () {},
-              child: Text(
-                lang.chargeNow,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(right: 8),
-            height: 50,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF64FFDA),
-                side: const BorderSide(color: Color(0xFF64FFDA)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {},
-              child: Text(
-                lang.logActivity,
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAchievementBox(double percent, S lang) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        border: Border.all(color: Colors.tealAccent.withOpacity(0.5)),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.emoji_events, color: Colors.tealAccent, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              "${lang.great} ${(percent * 100).toStringAsFixed(0)}% ${lang.ofYourDailyGoal}", // حل بديل
-              style: const TextStyle(
-                color: Colors.tealAccent,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-// الجزء الخاص بشريط التنقل السفلي
-Widget _buildBottomNavBar(BuildContext context) {
-  final lang = S.of(context)!;
-  
-  return Container(
-    decoration: const BoxDecoration(
-      color: Color(0xFF0F1A17),
-      border: Border(top: BorderSide(color: Colors.grey, width: 0.5)),
-    ),
-    child: BottomNavigationBar(
-      backgroundColor: Colors.transparent,
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.tealAccent,
-      unselectedItemColor: Colors.grey,
-      elevation: 0,
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-        
-        if (index == 1) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ActivityPage()),
-          );
-        } else if (index == 2) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => RewardsPage()),
-          );
-        } else if (index == 3) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AccountPage()),
-          );
-        } else if (index == 4) { // ✅ إضافة عنصر جديد
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ChargingStationsPage()),
-          );
-        }
-      },
-      items: [
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.home), 
-          label: lang.home,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.flash_on), 
-          label: lang.activity,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.public), 
-          label: lang.rewards,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.person), 
-          label: lang.myAccount,
-        ),
-        // ✅ إضافة عنصر جديد
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.ev_station), 
-          label: lang.chargingStations, 
-        ),
-      ],
-    ),
-  );
-}
 }

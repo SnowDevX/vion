@@ -580,7 +580,7 @@ class _AccountPageState extends State<AccountPage> {
               ),
             ),
             icon: const Icon(Icons.save),
-            label: const Text("حفظ التغييرات"),
+            label: Text(lang.savethechanges),
           ),
         ),
       ],

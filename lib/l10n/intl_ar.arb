@@ -70,12 +70,6 @@
   "chargeNow": "اشحن الآن",
   "logActivity": "سجل نشاطي",
   "achievementMessage": "رائع! لقد قطعت {percent}% من هدفك اليومي",
-  "@achievementMessage": {
-    "description": "رسالة الإنجاز مع النسبة المئوية",
-    "placeholders": {
-      "percent": {}
-    }
-  },
   "home": "الرئيسية",
   "activity": "النشاط",
   "rewards": "المكافآت",
@@ -115,6 +109,63 @@
   "interactiveMap": "خريطة تفاعلية",
   "interactiveMapDesc": "عرض المحطات على الخريطة",
   "navigationDirections": "اتجاهات الوصول",
-  "navigationDirectionsDesc": "أفضل طريق للمحطة"
+  "navigationDirectionsDesc": "أفضل طريق للمحطة",
+  "savethechanges": "حفظ التغييرات",
+  "appTitle": "تطبيق GrandUs",
+  "rewardsCenter": "مركز المكافآت",
+  "redeemYourPoints": "استبدل نقاطك بمكافآت مميزة",
+  "availableBalance": "رصيدك المتاح للاستبدال",
+  "points": "نقطة",
+  "freeCharging30min": "شحن مجاني - 30 دقيقة",
+  "freeChargingDesc": "احصل على 30 دقيقة شحن مجاني",
+  "discount10Percent": "خصم 10% على الرحلة",
+  "discountDesc": "كوبون خصم صالح للاستخدام مرة واحدة",
+  "internet1GB": "باقة إنترنت 1 جيجا",
+  "internetDesc": "هدية بيانات للهاتف المحمول",
+  "freeCarWash": "غسيل سيارة مجاني",
+  "carWashDesc": "قسيمة مقدمة من شركائنا",
+  "redeem": "استبدال",
+  "confirmRedeem": "تأكيد الاستبدال",
+  "redeemConfirmation": "هل أنت متأكد من استبدال {points} نقطة مقابل {reward}؟",
+  "redeemSuccess": "تم استبدال المكافأة \"{reward}\" بنجاح",
+  "insufficientPoints": "نقاط غير كافية",
+  "insufficientPointsMsg": "ليس لديك نقاط كافية لاستبدال هذه المكافأة. تحتاج إلى {points} نقطة إضافية.",
 
+  "@achievementMessage": {
+    "description": "رسالة الإنجاز مع النسبة المئوية",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "@redeemConfirmation": {
+    "description": "رسالة تأكيد الاستبدال مع متغيرات",
+    "placeholders": {
+      "points": {
+        "type": "int",
+        "example": "50"
+      },
+      "reward": {
+        "type": "String",
+        "example": "شحن مجاني"
+      }
+    }
+  },
+  "@redeemSuccess": {
+    "description": "رسالة نجاح الاستبدال",
+    "placeholders": {
+      "reward": {
+        "type": "String",
+        "example": "شحن مجاني"
+      }
+    }
+  },
+  "@insufficientPointsMsg": {
+    "description": "رسالة عدم كفاية النقاط",
+    "placeholders": {
+      "points": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  }
 }

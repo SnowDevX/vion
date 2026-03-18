@@ -23,7 +23,15 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m0(percent) =>
       "Great! You\'ve completed ${percent}% of your daily goal";
 
-  static String m1(error) => "Location error: ${error}";
+  static String m1(points) =>
+      "You don\'t have enough points to redeem this reward. You need ${points} more points.";
+
+  static String m2(error) => "Location error: ${error}";
+
+  static String m3(points, reward) =>
+      "Are you sure you want to redeem ${points} points for ${reward}?";
+
+  static String m4(reward) => "Reward \"${reward}\" redeemed successfully";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -56,9 +64,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "By type, distance, availability",
     ),
     "appSettings": MessageLookupByLibrary.simpleMessage("App Settings"),
+    "appTitle": MessageLookupByLibrary.simpleMessage("GrandUs App"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
+    "availableBalance": MessageLookupByLibrary.simpleMessage(
+      "Available Balance",
+    ),
     "backToLogin": MessageLookupByLibrary.simpleMessage("Back to Login"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "carWashDesc": MessageLookupByLibrary.simpleMessage(
+      "Voucher provided by our partners",
+    ),
     "change": MessageLookupByLibrary.simpleMessage("Change"),
     "changeNameAndEmail": MessageLookupByLibrary.simpleMessage(
       "Change name and email",
@@ -78,6 +93,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
       "Confirm password is required",
     ),
+    "confirmRedeem": MessageLookupByLibrary.simpleMessage("Confirm Redemption"),
     "congratulationsGoalComplete": MessageLookupByLibrary.simpleMessage(
       "Congratulations! Goal Completed",
     ),
@@ -95,6 +111,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyStepsGoal": MessageLookupByLibrary.simpleMessage("Daily Steps Goal"),
     "determiningLocation": MessageLookupByLibrary.simpleMessage(
       "Determining your location...",
+    ),
+    "discount10Percent": MessageLookupByLibrary.simpleMessage(
+      "10% Trip Discount",
+    ),
+    "discountDesc": MessageLookupByLibrary.simpleMessage(
+      "Discount coupon valid for one-time use",
     ),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -120,15 +142,28 @@ class MessageLookup extends MessageLookupByLibrary {
       "Charging stations feature is under development",
     ),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot Password?"),
+    "freeCarWash": MessageLookupByLibrary.simpleMessage("Free Car Wash"),
+    "freeCharging30min": MessageLookupByLibrary.simpleMessage(
+      "Free Charging - 30 min",
+    ),
+    "freeChargingDesc": MessageLookupByLibrary.simpleMessage(
+      "Get 30 minutes of free charging",
+    ),
     "great": MessageLookupByLibrary.simpleMessage("Great! You\'ve completed"),
     "height": MessageLookupByLibrary.simpleMessage("Height (cm)"),
     "heightCm": MessageLookupByLibrary.simpleMessage("Height (cm)"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "insufficientPoints": MessageLookupByLibrary.simpleMessage(
+      "Insufficient Points",
+    ),
+    "insufficientPointsMsg": m1,
     "interactiveMap": MessageLookupByLibrary.simpleMessage("Interactive Map"),
     "interactiveMapDesc": MessageLookupByLibrary.simpleMessage(
       "View stations on map",
     ),
+    "internet1GB": MessageLookupByLibrary.simpleMessage("1GB Internet Package"),
+    "internetDesc": MessageLookupByLibrary.simpleMessage("Mobile data gift"),
     "invalidEmail": MessageLookupByLibrary.simpleMessage(
       "Invalid email address",
     ),
@@ -139,7 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "languageChangedTo": MessageLookupByLibrary.simpleMessage(
       "Language changed to",
     ),
-    "locationError": m1,
+    "locationError": m2,
     "locationPermissionDenied": MessageLookupByLibrary.simpleMessage(
       "Location permission denied",
     ),
@@ -199,6 +234,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseEnterEmail": MessageLookupByLibrary.simpleMessage(
       "Please enter your email",
     ),
+    "points": MessageLookupByLibrary.simpleMessage("points"),
     "pointsCount": MessageLookupByLibrary.simpleMessage("156 points ✓"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
       "Privacy & Terms of Use",
@@ -206,6 +242,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileHeader": MessageLookupByLibrary.simpleMessage("Profile"),
     "receiveAlertsAndUpdates": MessageLookupByLibrary.simpleMessage(
       "Receive alerts and updates",
+    ),
+    "redeem": MessageLookupByLibrary.simpleMessage("Redeem"),
+    "redeemConfirmation": m3,
+    "redeemSuccess": m4,
+    "redeemYourPoints": MessageLookupByLibrary.simpleMessage(
+      "Redeem your points for exclusive rewards",
     ),
     "refreshLocation": MessageLookupByLibrary.simpleMessage("Refresh Location"),
     "resetError": MessageLookupByLibrary.simpleMessage(
@@ -216,7 +258,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetPassword": MessageLookupByLibrary.simpleMessage("Reset Password"),
     "rewards": MessageLookupByLibrary.simpleMessage("Rewards"),
+    "rewardsCenter": MessageLookupByLibrary.simpleMessage("Rewards Center"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
+    "savethechanges": MessageLookupByLibrary.simpleMessage("Save the changes"),
     "sendResetLink": MessageLookupByLibrary.simpleMessage("Send Reset Link"),
     "steps": MessageLookupByLibrary.simpleMessage("Steps"),
     "supportPolicies": MessageLookupByLibrary.simpleMessage(

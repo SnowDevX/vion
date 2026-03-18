@@ -10,10 +10,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:grandustionapp/auth/register_page.dart';
 import 'package:grandustionapp/auth/reset_password_page.dart';
 import 'package:grandustionapp/providers/language_provider.dart';
+import 'package:grandustionapp/screens/rewards_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp();
 
   runApp(
@@ -69,7 +71,8 @@ class _MyAppState extends State<MyApp> {
             '/register': (context) => const RegisterPage(),
             '/reset': (context) => const ResetPasswordPage(),
             '/account': (context) => const AccountPage(),
-              '/charging-stations': (context) => const ChargingStationsPage(), 
+              '/charging-stations': (context) => const ChargingStationsPage(),
+              '/rewards': (context) => const RewardsPage(),
 
           },
         );

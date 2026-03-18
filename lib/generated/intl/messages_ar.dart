@@ -22,7 +22,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(percent) => "رائع! لقد قطعت ${percent}% من هدفك اليومي";
 
-  static String m1(error) => "خطأ في تحديد الموقع: ${error}";
+  static String m1(points) =>
+      "ليس لديك نقاط كافية لاستبدال هذه المكافأة. تحتاج إلى ${points} نقطة إضافية.";
+
+  static String m2(error) => "خطأ في تحديد الموقع: ${error}";
+
+  static String m3(points, reward) =>
+      "هل أنت متأكد من استبدال ${points} نقطة مقابل ${reward}؟";
+
+  static String m4(reward) => "تم استبدال المكافأة \"${reward}\" بنجاح";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -53,9 +61,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "حسب النوع، المسافة، التوفر",
     ),
     "appSettings": MessageLookupByLibrary.simpleMessage("إعدادات التطبيق"),
+    "appTitle": MessageLookupByLibrary.simpleMessage("تطبيق GrandUs"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
+    "availableBalance": MessageLookupByLibrary.simpleMessage(
+      "رصيدك المتاح للاستبدال",
+    ),
     "backToLogin": MessageLookupByLibrary.simpleMessage("العودة لتسجيل الدخول"),
     "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
+    "carWashDesc": MessageLookupByLibrary.simpleMessage(
+      "قسيمة مقدمة من شركائنا",
+    ),
     "change": MessageLookupByLibrary.simpleMessage("تغيير"),
     "changeNameAndEmail": MessageLookupByLibrary.simpleMessage(
       "تغيير الاسم والبريد الإلكتروني",
@@ -75,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPasswordRequired": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور مطلوب",
     ),
+    "confirmRedeem": MessageLookupByLibrary.simpleMessage("تأكيد الاستبدال"),
     "congratulationsGoalComplete": MessageLookupByLibrary.simpleMessage(
       "تهانينا! الهدف مكتمل",
     ),
@@ -96,6 +112,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "determiningLocation": MessageLookupByLibrary.simpleMessage(
       "جاري تحديد موقعك...",
+    ),
+    "discount10Percent": MessageLookupByLibrary.simpleMessage(
+      "خصم 10% على الرحلة",
+    ),
+    "discountDesc": MessageLookupByLibrary.simpleMessage(
+      "كوبون خصم صالح للاستخدام مرة واحدة",
     ),
     "editProfile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
@@ -123,14 +145,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
+    "freeCarWash": MessageLookupByLibrary.simpleMessage("غسيل سيارة مجاني"),
+    "freeCharging30min": MessageLookupByLibrary.simpleMessage(
+      "شحن مجاني - 30 دقيقة",
+    ),
+    "freeChargingDesc": MessageLookupByLibrary.simpleMessage(
+      "احصل على 30 دقيقة شحن مجاني",
+    ),
     "great": MessageLookupByLibrary.simpleMessage("رائع! لقد قطعت"),
     "height": MessageLookupByLibrary.simpleMessage("الطول (سم)"),
     "heightCm": MessageLookupByLibrary.simpleMessage("الطول (سم)"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("المساعدة والدعم"),
     "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
+    "insufficientPoints": MessageLookupByLibrary.simpleMessage(
+      "نقاط غير كافية",
+    ),
+    "insufficientPointsMsg": m1,
     "interactiveMap": MessageLookupByLibrary.simpleMessage("خريطة تفاعلية"),
     "interactiveMapDesc": MessageLookupByLibrary.simpleMessage(
       "عرض المحطات على الخريطة",
+    ),
+    "internet1GB": MessageLookupByLibrary.simpleMessage("باقة إنترنت 1 جيجا"),
+    "internetDesc": MessageLookupByLibrary.simpleMessage(
+      "هدية بيانات للهاتف المحمول",
     ),
     "invalidEmail": MessageLookupByLibrary.simpleMessage(
       "البريد الإلكتروني غير صالح",
@@ -142,7 +179,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "languageChangedTo": MessageLookupByLibrary.simpleMessage(
       "تم تغيير اللغة إلى",
     ),
-    "locationError": m1,
+    "locationError": m2,
     "locationPermissionDenied": MessageLookupByLibrary.simpleMessage(
       "تم رفض صلاحية الوصول للموقع",
     ),
@@ -200,11 +237,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseEnterEmail": MessageLookupByLibrary.simpleMessage(
       "الرجاء إدخال البريد الإلكتروني",
     ),
+    "points": MessageLookupByLibrary.simpleMessage("نقطة"),
     "pointsCount": MessageLookupByLibrary.simpleMessage("156 نقطة ✓"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
       "الخصوصية وسياسة الاستخدام",
     ),
     "profileHeader": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
+    "redeem": MessageLookupByLibrary.simpleMessage("استبدال"),
+    "redeemConfirmation": m3,
+    "redeemSuccess": m4,
+    "redeemYourPoints": MessageLookupByLibrary.simpleMessage(
+      "استبدل نقاطك بمكافآت مميزة",
+    ),
     "refreshLocation": MessageLookupByLibrary.simpleMessage("تحديث الموقع"),
     "resetError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ أثناء إرسال رابط إعادة التعيين",
@@ -216,7 +260,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "استعادة كلمة المرور",
     ),
     "rewards": MessageLookupByLibrary.simpleMessage("المكافآت"),
+    "rewardsCenter": MessageLookupByLibrary.simpleMessage("مركز المكافآت"),
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
+    "savethechanges": MessageLookupByLibrary.simpleMessage("حفظ التغييرات"),
     "sendResetLink": MessageLookupByLibrary.simpleMessage(
       "إرسال رابط إعادة التعيين",
     ),

@@ -1,133 +1,225 @@
 import 'package:pedometer/pedometer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:grandustionapp/services/firebase_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeBackend {
-  final FirebaseService _firebaseService = FirebaseService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   
   int steps = 0;
-  int points = 0; 
+  int todayPoints = 0;
+  int totalPoints = 0;
   int dailyGoal = 10000;
   double todayProgress = 0.0;
-  int lastSavedSteps = 0;
+  
+  int userHeight = 0;
+  int userWeight = 0;
   
   late Stream<StepCount> stepCountStream;
   
-  // التحقق من بداية يوم جديد
+  String? get _userId => _auth.currentUser?.uid;
+  
+  //  حساب النقاط من الخطوات (100 خطوة = 1 نقطة)
+  int _calculatePoints(int steps) {
+    return (steps / 100).floor();
+  }
+  
+  //  الحصول على تاريخ اليوم
+  String get _todayDate {
+    final now = DateTime.now();
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
+  
+  //  التحقق من بداية يوم جديد
   Future<void> checkAndResetDailySteps() async {
-    final prefs = await SharedPreferences.getInstance();
-    final today = DateTime.now().toIso8601String().split('T')[0];
+    if (_userId == null) return;
     
-    final lastDate = prefs.getString('last_date') ?? today;
-    final lastDateObj = DateTime.parse(lastDate);
+    print('========== التحقق من اليوم الجديد ==========');
+    print(' تاريخ اليوم: $_todayDate');
     
-    if (lastDateObj.day != DateTime.now().day) {
-      print(' يوم جديد - إعادة تعيين الخطوات');
+    final userDocRef = _firestore.collection('users').doc(_userId);
+    final userDoc = await userDocRef.get();
+    
+    if (!userDoc.exists) {
+      print(' مستخدم جديد - إنشاء مستند');
+      await _createNewUser();
       steps = 0;
-      points = 0; 
+      todayPoints = 0;
+      totalPoints = 0;
+      todayProgress = 0.0;
+      return;
+    }
+    
+    final data = userDoc.data() as Map<String, dynamic>;
+    final lastDate = data['lastDate'] ?? '';
+    
+    print(' آخر تاريخ مسجل: $lastDate');
+    
+    if (lastDate != _todayDate && lastDate.isNotEmpty) {
+      print(' يوم جديد - حفظ بيانات الأمس');
+      
+      final yesterdaySteps = data['todaySteps'] ?? 0;
+      
+      if (yesterdaySteps > 0) {
+        await userDocRef.update({
+          'stepsHistory.$lastDate': yesterdaySteps,
+        });
+        print('  تم حفظ تاريخ $lastDate: $yesterdaySteps خطوة');
+      }
+      
+      await userDocRef.update({
+        'lastDate': _todayDate,
+        'todaySteps': 0,
+        'todayPoints': 0,
+      });
+      
+      steps = 0;
+      todayPoints = 0;
       todayProgress = 0.0;
       
-      await prefs.setString('last_date', today);
-      await prefs.setInt('last_saved_steps', 0);
-      await prefs.setInt('last_points', 0); 
-      
-      await syncStepsToBackend(0, isReset: true);
+      print('  تم إعادة تعيين بيانات اليوم الجديد');
     } else {
-      lastSavedSteps = prefs.getInt('last_saved_steps') ?? 0;
-      steps = lastSavedSteps;
-      
-      int savedPoints = prefs.getInt('last_points') ?? 0;
-      points = savedPoints;
-      
+      steps = data['todaySteps'] ?? 0;
+      todayPoints = data['todayPoints'] ?? 0;
+      totalPoints = data['totalPoints'] ?? 0;
+      dailyGoal = data['dailyStepsGoal'] ?? 10000;
       todayProgress = (steps / dailyGoal).clamp(0.0, 1.0);
       
-      print(' استرجاع: خطوات=$steps, نقاط=$points');
+      print(' نفس اليوم - خطوات: $steps, نقاط: $todayPoints');
     }
+    
+    userHeight = data['height'] ?? 0;
+    userWeight = data['weight'] ?? 0;
+    
+    print('============================================');
   }
 
-  // دالة حفظ الخطوات 
+  //  إنشاء مستخدم جديد
+  Future<void> _createNewUser() async {
+    if (_userId == null) return;
+    
+    await _firestore.collection('users').doc(_userId).set({
+      'name': _auth.currentUser?.displayName ?? 'زائر',
+      'email': _auth.currentUser?.email ?? '',
+      'height': 0,
+      'weight': 0,
+      'dailyStepsGoal': 10000,
+      'todaySteps': 0,
+      'todayPoints': 0,
+      'totalPoints': 0,
+      'lastDate': _todayDate,
+      'stepsHistory': {},
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    print(' تم إنشاء مستند جديد للمستخدم: $_userId');
+  }
+
+  //  حفظ الخطوات
   Future<void> saveStepsLocally(int newSteps) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('last_saved_steps', newSteps);
+    if (_userId == null) return;
     
-    int newPoints = (newSteps / 100).floor();
-    await prefs.setInt('last_points', newPoints);
+    final newTodayPoints = _calculatePoints(newSteps);
     
-    print(' حفظ: خطوات=$newSteps, نقاط=$newPoints');
+    await _firestore.collection('users').doc(_userId).update({
+      'todaySteps': newSteps,
+      'todayPoints': newTodayPoints,
+    });
+    
+    print(' حفظ الخطوات: $newSteps');
   }
 
-  // بدء مستشعر الخطوات
+  //  بدء مستشعر الخطوات
   void startPedometer(Function(int) onStepUpdate) {
     try {
+      print(' محاولة بدء مستشعر الخطوات...');
+      
       stepCountStream = Pedometer.stepCountStream;
-      stepCountStream.listen((StepCount event) {
-        onStepUpdate(event.steps);
-      });
+      
+      stepCountStream.listen(
+        (StepCount event) {
+          print(' مستشعر الخطوات: ${event.steps} خطوة');
+          onStepUpdate(event.steps);
+        },
+        onError: (error) {
+          print(' خطأ في المستشعر: $error');
+        },
+      );
+      
+      print(' تم بدء مستشعر الخطوات بنجاح');
+      
     } catch (e) {
-      print('مستشعر الخطوات غير متوفر: $e');
+      print(' فشل بدء المستشعر: $e');
+      print(' قد يكون الجهاز لا يدعم عداد الخطوات');
     }
   }
 
-  // مزامنة الباك إند مع تحديث Firestore
+  //  مزامنة الخطوات
   Future<void> syncStepsToBackend(int steps, {bool isReset = false}) async {
+    if (_userId == null) return;
+    
     try {
-      int calculatedPoints = (steps / 100).floor();
+      final newTodayPoints = _calculatePoints(steps);
       
       if (isReset) {
-        await _firebaseService.resetDailySteps();
-        points = 0;
-        await _firebaseService.updateUserPoints(0); // ✅ تحديث Firestore
+        todayPoints = 0;
+        await _firestore.collection('users').doc(_userId).update({
+          'todayPoints': 0,
+        });
       } else {
-        final result = await _firebaseService.syncSteps(steps);
-        if (result != null && result['success'] == true) {
-          if (result['newPoints'] != null && result['newPoints'] > 0) {
-            points = result['newPoints'];
-          } else {
-            points = calculatedPoints;
-          }
-        } else {
-          points = calculatedPoints;
-        }
+        final pointsDifference = newTodayPoints - todayPoints;
         
-        // ✅ تحديث Firestore بالنقاط الجديدة
-        await _firebaseService.updateUserPoints(points);
+        if (pointsDifference > 0) {
+          totalPoints += pointsDifference;
+          todayPoints = newTodayPoints;
+          
+          await _firestore.collection('users').doc(_userId).update({
+            'todayPoints': todayPoints,
+            'totalPoints': totalPoints,
+          });
+          
+          print(' نقاط إضافية: +$pointsDifference');
+          print(' إجمالي النقاط: $totalPoints');
+        }
       }
       
-      print(' مزامنة: خطوات=$steps, نقاط=$points');
+      print(' مزامنة: خطوات=$steps');
       
     } catch (e) {
-      print('خطأ في مزامنة الخطوات: $e');
-      points = (steps / 100).floor();
-      await _firebaseService.updateUserPoints(points); // ✅ تحديث حتى مع الخطأ
+      print(' خطأ في المزامنة: $e');
     }
   }
 
-  // جلب إحصائيات المستخدم
+  //  جلب إحصائيات المستخدم
   Future<void> loadUserStats() async {
+    if (_userId == null) return;
+    
     try {
-      final result = await _firebaseService.getUserStats();
-      if (result['success'] == true) {
-        final data = result['data'];
+      final userDoc = await _firestore.collection('users').doc(_userId).get();
+      
+      if (userDoc.exists) {
+        final data = userDoc.data() as Map<String, dynamic>;
         
-        int backendPoints = data['totalPoints'] ?? 0;
-        if (backendPoints > points) {
-          points = backendPoints;
-        }
-        
-        dailyGoal = data['dailyGoal'] ?? dailyGoal;
+        todayPoints = data['todayPoints'] ?? 0;
+        totalPoints = data['totalPoints'] ?? 0;
+        dailyGoal = data['dailyStepsGoal'] ?? 10000;
+        userHeight = data['height'] ?? 0;
+        userWeight = data['weight'] ?? 0;
+        steps = data['todaySteps'] ?? 0;
         todayProgress = (steps / dailyGoal).clamp(0.0, 1.0);
+        
+        print(' تم تحميل بيانات المستخدم');
       }
     } catch (e) {
-      print('خطأ في جلب بيانات المستخدم: $e');
+      print(' خطأ في جلب البيانات: $e');
     }
   }
 
-  // تحديث التقدم
+  //  تحديث التقدم
   void updateProgress(int newSteps) {
     steps = newSteps;
-    points = (steps / 100).floor(); 
+    todayPoints = _calculatePoints(newSteps);
     todayProgress = (steps / dailyGoal).clamp(0.0, 1.0);
     
-    print(' تحديث: خطوات=$steps, نقاط=$points, تقدم=${todayProgress.toStringAsFixed(2)}');
+    print(' تقدم: خطوات=$steps, تقدم=${(todayProgress * 100).toStringAsFixed(1)}%');
   }
 }

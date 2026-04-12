@@ -70,10 +70,9 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
     await _getAddressFromLatLng(position.latitude, position.longitude);
     
   } catch (e) {
-    print("❌ خطأ في تحديد الموقع: $e");
+    print(" خطأ في تحديد الموقع: $e");
     
     setState(() {
-      // ✅ تمرير متغير واحد فقط
       _currentAddress = S.of(context)!.locationError(e.toString());
       _isLoading = false;
     });
@@ -142,7 +141,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
   @override
   Widget build(BuildContext context) {
     final isRTL = Localizations.localeOf(context).languageCode == 'ar';
-    final lang = S.of(context)!; // ✅ الحصول على الترجمة
+    final lang = S.of(context)!; 
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
@@ -159,7 +158,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
       backgroundColor: const Color(0xFF0F1A17),
       elevation: 0,
       title: Text(
-        lang.chargingStations, // ✅ استخدام الترجمة
+        lang.chargingStations, 
         style: const TextStyle(
           color: Colors.white,
           fontSize: 22,
@@ -178,7 +177,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
         IconButton(
           icon: const Icon(Icons.refresh, color: Colors.white),
           onPressed: _getCurrentLocation,
-          tooltip: lang.refreshLocation, // ✅ استخدام الترجمة
+          tooltip: lang.refreshLocation, 
         ),
       ],
     );
@@ -252,7 +251,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      lang.yourCurrentLocation, // ✅ استخدام الترجمة
+                      lang.yourCurrentLocation, 
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -288,7 +287,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                 Icon(Icons.check_circle, color: Colors.green, size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  lang.locationSuccess, // ✅ استخدام الترجمة
+                  lang.locationSuccess, 
                   style: TextStyle(color: Colors.green, fontSize: 14),
                 ),
               ],
@@ -311,7 +310,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                   ),
                 ),
                 icon: const Icon(Icons.refresh),
-                label: Text(lang.refreshLocation), // ✅ استخدام الترجمة
+                label: Text(lang.refreshLocation), 
               ),
             ),
           ],
@@ -338,7 +337,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  lang.locationPermissionRequired, // ✅ استخدام الترجمة
+                  lang.locationPermissionRequired, 
                   style: TextStyle(
                     color: Colors.orange,
                     fontWeight: FontWeight.bold,
@@ -346,7 +345,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  lang.locationPermissionMessage, // ✅ استخدام الترجمة
+                  lang.locationPermissionMessage, 
                   style: TextStyle(color: Colors.grey.shade300, fontSize: 12),
                 ),
               ],
@@ -381,7 +380,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
               const SizedBox(height: 24),
 
               Text(
-                lang.comingSoon, // ✅ استخدام الترجمة
+                lang.comingSoon, 
                 style: const TextStyle(
                   color: Colors.tealAccent,
                   fontSize: 32,
@@ -394,7 +393,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Text(
-                  lang.featureInDevelopment, // ✅ استخدام الترجمة
+                  lang.featureInDevelopment, 
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade400, fontSize: 18),
                 ),
@@ -405,7 +404,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Text(
-                  lang.comingSoonDescription, // ✅ استخدام الترجمة
+                  lang.comingSoonDescription, 
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
                 ),
@@ -424,7 +423,7 @@ class _ChargingStationsPageState extends State<ChargingStationsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      lang.upcomingFeatures, // ✅ استخدام الترجمة
+                      lang.upcomingFeatures, 
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,

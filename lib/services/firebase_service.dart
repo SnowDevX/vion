@@ -48,14 +48,14 @@ class FirebaseService {
         'lastReset': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
-      print('✅ تم إعادة تعيين الخطوات لليوم: $today');
+      print(' تم إعادة تعيين الخطوات لليوم: $today');
       
       return {
         'success': true,
         'message': 'Daily steps reset successfully',
       };
     } catch (e) {
-      print('❌ خطأ في إعادة تعيين الخطوات: $e');
+      print(' خطأ في إعادة تعيين الخطوات: $e');
       return {'success': false, 'error': e.toString()};
     }
   }
@@ -113,7 +113,7 @@ class FirebaseService {
     }
   }
 
-  // ✅ دالة تحديث النقاط في Firestore (مضافة)
+  //  دالة تحديث النقاط في Firestore بناءً على النقاط الجديدة
   Future<void> updateUserPoints(int newPoints) async {
     try {
       final user = _auth.currentUser;
@@ -125,13 +125,13 @@ class FirebaseService {
         'lastUpdated': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
       
-      print('✅ تم تحديث النقاط في Firestore: $newPoints');
+      print(' تم تحديث النقاط في Firestore: $newPoints');
     } catch (e) {
-      print('❌ خطأ في تحديث النقاط: $e');
+      print(' خطأ في تحديث النقاط: $e');
     }
   }
 
-  // دالة تحديث النقاط (قديمة - للتوافق)
+  // دالة تحديث النقاط بناءً على النقاط الجديدة المحسوبة من الخطوات
   Future<void> updatePoints(int newPoints) async {
     await updateUserPoints(newPoints);
   }

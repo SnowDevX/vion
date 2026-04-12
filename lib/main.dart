@@ -1,23 +1,25 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:grandustionapp/generated/l10n.dart';
 import 'package:grandustionapp/screens/account_page.dart';
 import 'package:grandustionapp/screens/charging_stations_page.dart';
 import 'package:grandustionapp/screens/home_page.dart';
 import 'package:grandustionapp/auth/login_page.dart';
+import 'package:grandustionapp/auth/auth_gate.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:grandustionapp/auth/register_page.dart';
 import 'package:grandustionapp/auth/reset_password_page.dart';
 import 'package:grandustionapp/providers/language_provider.dart';
 import 'package:grandustionapp/screens/rewards_page.dart';
+import 'package:grandustionapp/screens/goal_setup_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp();
-
+  
   runApp(
     MultiProvider( 
       providers: [
@@ -38,19 +40,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print('=====================User is currently signed out!');
-      } else {
-        print('=====================User is signed in!');
-      }
-    });
     super.initState();
+    _removeSplashScreen();
+  }
+  
+  Future<void> _removeSplashScreen() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    FlutterNativeSplash.remove();
   }
 
   @override
   Widget build(BuildContext context) {
-    // اللغة
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
         return MaterialApp(
@@ -63,17 +63,16 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          // التوجيه بين الصفحات
-          initialRoute: '/login',
+          home: const AuthGate(),
           routes: {
             '/login': (context) => const LoginPage(),
-            '/home': (context) => const HomePage(),
             '/register': (context) => const RegisterPage(),
             '/reset': (context) => const ResetPasswordPage(),
+            '/home': (context) => const HomePage(),
+            '/goal-setup': (context) => const GoalSetupPage(),
             '/account': (context) => const AccountPage(),
-              '/charging-stations': (context) => const ChargingStationsPage(),
-              '/rewards': (context) => const RewardsPage(),
-
+            '/charging-stations': (context) => const ChargingStationsPage(),
+            '/rewards': (context) => const RewardsPage(),
           },
         );
       },

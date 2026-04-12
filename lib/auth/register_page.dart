@@ -26,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
       _formKey.currentState!.save();
 
       try {
+        //   مؤشر التحميل
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -34,14 +35,17 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
 
+        //  إنشاء حساب جديد
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
               email: Myemail.trim(),
               password: Mypassword.trim(),
             );
 
+        //  تحديث اسم المستخدم
         await userCredential.user!.updateDisplayName(Myusername);
 
+        //  إنشاء مستند المستخدم في Firestore
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
@@ -49,10 +53,11 @@ class _RegisterPageState extends State<RegisterPage> {
               'uid': userCredential.user!.uid,
               'name': Myusername,
               'email': Myemail.trim(),
-              'height': 76,
-              'weight': 82, 
-              'dailyStepsGoal': 10000,
+              'height': 0,  
+              'weight': 0,  
+              'dailyStepsGoal': 0, 
               'notifications': true,
+              'points': 0,
               'createdAt': FieldValue.serverTimestamp(),
               'updatedAt': FieldValue.serverTimestamp(),
             });
@@ -64,15 +69,16 @@ class _RegisterPageState extends State<RegisterPage> {
             SnackBar(
               content: Text(S.of(context)!.accountCreatedSuccess),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
 
-        // الانتقال مباشرة إلى الصفحة الرئيسية بعد التسجيل
+        //  العودة إلى صفحة تسجيل الدخول
         if (mounted) {
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacementNamed(context, '/login');
         }
+
       } on FirebaseAuthException catch (e) {
         if (mounted) Navigator.pop(context);
 
@@ -90,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
           SnackBar(
             content: Text(errorMessage),
             backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       } catch (e) {
@@ -265,5 +271,14 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passController.dispose();
+    confirmController.dispose();
+    super.dispose();
   }
 }

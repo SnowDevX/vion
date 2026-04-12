@@ -47,7 +47,7 @@ class ConnectionStatus extends StatelessWidget {
 }
 
 // =============================================
-// 🔷 دائرة التقدم
+//  دائرة التقدم
 // =============================================
 class ProgressCircle extends StatelessWidget {
   final double percent;
@@ -132,7 +132,7 @@ class ProgressCircle extends StatelessWidget {
 }
 
 // =============================================
-// 🔷 نسبة الهدف
+//  نسبة الهدف
 // =============================================
 class GoalPercentText extends StatelessWidget {
   final double percent;
@@ -162,7 +162,7 @@ class GoalPercentText extends StatelessWidget {
 }
 
 // =============================================
-// 🔷 قسم نقاط الطاقة
+//  قسم النقاط 
 // =============================================
 class EnergyPointsSection extends StatelessWidget {
   final int points;
@@ -277,7 +277,7 @@ class EnergyPointsSection extends StatelessWidget {
 }
 
 // =============================================
-// 🔷 أزرار الإجراءات
+//  أزرار الإجراءات
 // =============================================
 class ActionButtons extends StatelessWidget {
   final VoidCallback onChargeNow;
@@ -343,7 +343,7 @@ class ActionButtons extends StatelessWidget {
 }
 
 // =============================================
-// 🔷 صندوق الإنجاز
+//  نسبة الإنجاز
 // =============================================
 class AchievementBox extends StatelessWidget {
   final double percent;

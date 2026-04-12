@@ -1448,6 +1448,656 @@ class S {
       args: [],
     );
   }
+
+  /// `Loading...`
+  String get loading {
+    return Intl.message('Loading...', name: 'loading', desc: '', args: []);
+  }
+
+  /// `Daily Goal`
+  String get dailyGoal {
+    return Intl.message('Daily Goal', name: 'dailyGoal', desc: '', args: []);
+  }
+
+  /// `Help & Support`
+  String get help_support {
+    return Intl.message(
+      'Help & Support',
+      name: 'help_support',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacy_policy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacy_policy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Frequently Asked Questions`
+  String get faq {
+    return Intl.message(
+      'Frequently Asked Questions',
+      name: 'faq',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact Support`
+  String get contact_support {
+    return Intl.message(
+      'Contact Support',
+      name: 'contact_support',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone Number`
+  String get phone {
+    return Intl.message('Phone Number', name: 'phone', desc: '', args: []);
+  }
+
+  /// `Copy`
+  String get copy {
+    return Intl.message('Copy', name: 'copy', desc: '', args: []);
+  }
+
+  /// `Copied!`
+  String get copied {
+    return Intl.message('Copied!', name: 'copied', desc: '', args: []);
+  }
+
+  /// `How are points calculated?`
+  String get how_are_points_calculated {
+    return Intl.message(
+      'How are points calculated?',
+      name: 'how_are_points_calculated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Points are calculated based on the number of steps you take daily, where every 100 steps is converted into 1 energy point within the app.`
+  String get points_calculation_answer {
+    return Intl.message(
+      'Points are calculated based on the number of steps you take daily, where every 100 steps is converted into 1 energy point within the app.',
+      name: 'points_calculation_answer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Can points be converted into real energy?`
+  String get can_points_be_converted {
+    return Intl.message(
+      'Can points be converted into real energy?',
+      name: 'can_points_be_converted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes, points are linked to the energy generated from smart tiles and can be used to charge devices or light up areas.`
+  String get points_conversion_answer {
+    return Intl.message(
+      'Yes, points are linked to the energy generated from smart tiles and can be used to charge devices or light up areas.',
+      name: 'points_conversion_answer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How do I use points to charge my device?`
+  String get how_to_use_points {
+    return Intl.message(
+      'How do I use points to charge my device?',
+      name: 'how_to_use_points',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You can use points by selecting the charging option within the app and connecting your device to the smart tile area.`
+  String get use_points_answer {
+    return Intl.message(
+      'You can use points by selecting the charging option within the app and connecting your device to the smart tile area.',
+      name: 'use_points_answer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Is there a daily maximum for points?`
+  String get max_points_per_day {
+    return Intl.message(
+      'Is there a daily maximum for points?',
+      name: 'max_points_per_day',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes, there is a daily maximum for points to ensure fair energy distribution among users.`
+  String get max_points_answer {
+    return Intl.message(
+      'Yes, there is a daily maximum for points to ensure fair energy distribution among users.',
+      name: 'max_points_answer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What should I do if my steps are not counted?`
+  String get steps_not_counted {
+    return Intl.message(
+      'What should I do if my steps are not counted?',
+      name: 'steps_not_counted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Make sure you have enabled motion tracking permissions on your device. If the problem persists, you can contact support.`
+  String get steps_not_counted_answer {
+    return Intl.message(
+      'Make sure you have enabled motion tracking permissions on your device. If the problem persists, you can contact support.',
+      name: 'steps_not_counted_answer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Does the app work offline?`
+  String get app_offline {
+    return Intl.message(
+      'Does the app work offline?',
+      name: 'app_offline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Some features work offline, but an internet connection is required to sync points and data.`
+  String get app_offline_answer {
+    return Intl.message(
+      'Some features work offline, but an internet connection is required to sync points and data.',
+      name: 'app_offline_answer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Is my data secure?`
+  String get data_security {
+    return Intl.message(
+      'Is my data secure?',
+      name: 'data_security',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes, your data is protected using high-security technologies to ensure privacy.`
+  String get data_security_answer {
+    return Intl.message(
+      'Yes, your data is protected using high-security technologies to ensure privacy.',
+      name: 'data_security_answer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Information Collection`
+  String get information_collection {
+    return Intl.message(
+      'Information Collection',
+      name: 'information_collection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We collect the following information: name, email, height, weight, daily step count, and energy points. This information is necessary to provide an accurate and personalized physical activity tracking service.`
+  String get information_collection_content {
+    return Intl.message(
+      'We collect the following information: name, email, height, weight, daily step count, and energy points. This information is necessary to provide an accurate and personalized physical activity tracking service.',
+      name: 'information_collection_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use of Information`
+  String get information_usage {
+    return Intl.message(
+      'Use of Information',
+      name: 'information_usage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We use your information to personalize your experience, improve app performance, calculate energy points, and provide personalized recommendations to help you achieve your health goals.`
+  String get information_usage_content {
+    return Intl.message(
+      'We use your information to personalize your experience, improve app performance, calculate energy points, and provide personalized recommendations to help you achieve your health goals.',
+      name: 'information_usage_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Information Sharing`
+  String get information_sharing {
+    return Intl.message(
+      'Information Sharing',
+      name: 'information_sharing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We do not share your personal information with third parties without your explicit consent or when required by law. All your data remains secure and protected.`
+  String get information_sharing_content {
+    return Intl.message(
+      'We do not share your personal information with third parties without your explicit consent or when required by law. All your data remains secure and protected.',
+      name: 'information_sharing_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data Security`
+  String get data_security_policy {
+    return Intl.message(
+      'Data Security',
+      name: 'data_security_policy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We use advanced security measures to protect your data including encryption and two-factor authentication. We are committed to maintaining the confidentiality and security of your information.`
+  String get data_security_content {
+    return Intl.message(
+      'We use advanced security measures to protect your data including encryption and two-factor authentication. We are committed to maintaining the confidentiality and security of your information.',
+      name: 'data_security_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Rights`
+  String get your_rights {
+    return Intl.message('Your Rights', name: 'your_rights', desc: '', args: []);
+  }
+
+  /// `You have the right to access, correct, or delete your personal data at any time. You can contact the support team to request this.`
+  String get your_rights_content {
+    return Intl.message(
+      'You have the right to access, correct, or delete your personal data at any time. You can contact the support team to request this.',
+      name: 'your_rights_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last Updated`
+  String get last_update {
+    return Intl.message(
+      'Last Updated',
+      name: 'last_update',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vion.project2026@gmail.com`
+  String get support_email {
+    return Intl.message(
+      'Vion.project2026@gmail.com',
+      name: 'support_email',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `966xxxxxxxx+`
+  String get support_phone {
+    return Intl.message(
+      '966xxxxxxxx+',
+      name: 'support_phone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy`
+  String get privacy_tab {
+    return Intl.message('Privacy', name: 'privacy_tab', desc: '', args: []);
+  }
+
+  /// `Help`
+  String get help_tab {
+    return Intl.message('Help', name: 'help_tab', desc: '', args: []);
+  }
+
+  /// `Charging...`
+  String get charging {
+    return Intl.message('Charging...', name: 'charging', desc: '', args: []);
+  }
+
+  /// `Ready to Charge`
+  String get readyToCharge {
+    return Intl.message(
+      'Ready to Charge',
+      name: 'readyToCharge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Charged`
+  String get charged {
+    return Intl.message('Charged', name: 'charged', desc: '', args: []);
+  }
+
+  /// `Phone Battery`
+  String get phoneBattery {
+    return Intl.message(
+      'Phone Battery',
+      name: 'phoneBattery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Charging`
+  String get startCharging {
+    return Intl.message(
+      'Start Charging',
+      name: 'startCharging',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop Charging`
+  String get stopCharging {
+    return Intl.message(
+      'Stop Charging',
+      name: 'stopCharging',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Balance`
+  String get yourBalance {
+    return Intl.message(
+      'Your Balance',
+      name: 'yourBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Points Used`
+  String get pointsUsed {
+    return Intl.message('Points Used', name: 'pointsUsed', desc: '', args: []);
+  }
+
+  /// `Remaining Points`
+  String get remainingPoints {
+    return Intl.message(
+      'Remaining Points',
+      name: 'remainingPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Charging Completed`
+  String get chargingCompleted {
+    return Intl.message(
+      'Charging Completed',
+      name: 'chargingCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone charged successfully`
+  String get phoneChargedSuccess {
+    return Intl.message(
+      'Phone charged successfully',
+      name: 'phoneChargedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Points used:`
+  String get pointsUsedLabel {
+    return Intl.message(
+      'Points used:',
+      name: 'pointsUsedLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Charging Stopped`
+  String get chargingStopped {
+    return Intl.message(
+      'Charging Stopped',
+      name: 'chargingStopped',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Charging stopped.`
+  String get chargingStoppedMessage {
+    return Intl.message(
+      'Charging stopped.',
+      name: 'chargingStoppedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reason:`
+  String get reason {
+    return Intl.message('Reason:', name: 'reason', desc: '', args: []);
+  }
+
+  /// `Failed to deduct points`
+  String get deductPointsFailed {
+    return Intl.message(
+      'Failed to deduct points',
+      name: 'deductPointsFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An error occurred while deducting points. Please try again.`
+  String get deductPointsError {
+    return Intl.message(
+      'An error occurred while deducting points. Please try again.',
+      name: 'deductPointsError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Charging completed but failed to deduct points. Please contact support.`
+  String get chargeFailedPoints {
+    return Intl.message(
+      'Charging completed but failed to deduct points. Please contact support.',
+      name: 'chargeFailedPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone is fully charged`
+  String get batteryFull {
+    return Intl.message(
+      'Phone is fully charged',
+      name: 'batteryFull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cannot charge because the phone is at 100%`
+  String get cannotChargeBatteryFull {
+    return Intl.message(
+      'Cannot charge because the phone is at 100%',
+      name: 'cannotChargeBatteryFull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your current balance: points\nWalk to earn points first`
+  String get insufficientPointsMessage {
+    return Intl.message(
+      'Your current balance: points\nWalk to earn points first',
+      name: 'insufficientPointsMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Walk to earn points first`
+  String get walkToEarnPoints {
+    return Intl.message(
+      'Walk to earn points first',
+      name: 'walkToEarnPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone charging completed`
+  String get batteryChargingComplete {
+    return Intl.message(
+      'Phone charging completed',
+      name: 'batteryChargingComplete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeem Reward`
+  String get redeemReward {
+    return Intl.message(
+      'Redeem Reward',
+      name: 'redeemReward',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` points?`
+  String get confirmRedeemEnd {
+    return Intl.message(
+      ' points?',
+      name: 'confirmRedeemEnd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `!`
+  String get redeemSuccessEnd {
+    return Intl.message('!', name: 'redeemSuccessEnd', desc: '', args: []);
+  }
+
+  /// `Failed to redeem reward. Check your balance.`
+  String get redeemFailed {
+    return Intl.message(
+      'Failed to redeem reward. Check your balance.',
+      name: 'redeemFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `10% discount on charging`
+  String get discount10 {
+    return Intl.message(
+      '10% discount on charging',
+      name: 'discount10',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `10% discount on any charging process`
+  String get discount10Desc {
+    return Intl.message(
+      '10% discount on any charging process',
+      name: 'discount10Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free Shipping`
+  String get freeShipping {
+    return Intl.message(
+      'Free Shipping',
+      name: 'freeShipping',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Free shipping for one time`
+  String get freeShippingDesc {
+    return Intl.message(
+      'Free shipping for one time',
+      name: 'freeShippingDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `50 SAR Coupon`
+  String get coupon50 {
+    return Intl.message('50 SAR Coupon', name: 'coupon50', desc: '', args: []);
+  }
+
+  /// `50 SAR discount coupon`
+  String get coupon50Desc {
+    return Intl.message(
+      '50 SAR discount coupon',
+      name: 'coupon50Desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Points Required`
+  String get pointsRequired {
+    return Intl.message(
+      'Points Required',
+      name: 'pointsRequired',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

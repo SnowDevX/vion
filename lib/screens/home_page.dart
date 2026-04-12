@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:grandustionapp/screens/account_page.dart';
-import 'package:grandustionapp/screens/charging_stations_page.dart';
+import 'package:grandustionapp/screens/charging_stations_page.dart';  
+import 'package:grandustionapp/screens/charge_now_page.dart';        
 import 'package:grandustionapp/generated/l10n.dart';
 import 'activity_page.dart';
-import 'rewards_page.dart';
+import 'rewards_page.dart' ;
 import 'package:grandustionapp/components/home_components.dart';
 import 'package:grandustionapp/services/home_backend.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,16 +33,13 @@ class _HomePageState extends State<HomePage> {
     _initializeApp();
   }
 
-  // دالة تطلب الإذنين 
   Future<void> _requestAllPermissions() async {
     try {
-      // طلب إذن النشاط البدني
       var activityStatus = await Permission.activityRecognition.status;
       if (activityStatus.isDenied) {
         activityStatus = await Permission.activityRecognition.request();
       }
       
-      // طلب إذن الموقع
       var locationStatus = await Permission.location.status;
       if (locationStatus.isDenied) {
         locationStatus = await Permission.location.request();
@@ -52,11 +50,11 @@ class _HomePageState extends State<HomePage> {
         _locationPermissionGranted = locationStatus.isGranted;
       });
       
-      print('✅ النشاط البدني: $_activityPermissionGranted');
-      print('✅ الموقع: $_locationPermissionGranted');
+      print(' النشاط البدني: $_activityPermissionGranted');
+      print(' الموقع: $_locationPermissionGranted');
       
     } catch (e) {
-      print('خطأ في طلب الصلاحيات: $e');
+      print(' خطأ في طلب الصلاحيات: $e');
     }
   }
 
@@ -70,20 +68,20 @@ class _HomePageState extends State<HomePage> {
 
       setState(() => _isLoading = false);
     } catch (e) {
-      print('خطأ في التهيئة: $e');
+      print(' خطأ في التهيئة: $e');
       setState(() => _isLoading = false);
     }
   }
 
   void _onStepUpdate(int newSteps) async {
+    print(' onStepUpdate: $newSteps');
+    
     setState(() {
       _backend.updateProgress(newSteps);
     });
     
     await _backend.saveStepsLocally(newSteps);
     await _backend.syncStepsToBackend(newSteps);
-    
-    setState(() {});
   }
 
   @override
@@ -95,12 +93,23 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final isRTL = Localizations.localeOf(context).languageCode == 'ar';
+    final lang = S.of(context)!;
 
     if (_isLoading) {
       return Scaffold(
         backgroundColor: const Color(0xFF0F1A17),
         body: Center(
-          child: CircularProgressIndicator(color: Colors.tealAccent),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(color: Color(0xFF3DDC97)),
+              const SizedBox(height: 20),
+              Text(
+                lang.loading,
+                style: const TextStyle(color: Color(0xFF3DDC97)),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -117,7 +126,7 @@ class _HomePageState extends State<HomePage> {
             const ActivityPage(),
             const RewardsPage(),
             const AccountPage(),
-            const ChargingStationsPage(),
+            const ChargingStationsPage(),  
           ],
         ),
         bottomNavigationBar: _buildBottomNavBar(),
@@ -126,6 +135,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHomeContent() {
+    final lang = S.of(context)!;
+    
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -133,8 +144,21 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const ConnectionStatus(),
-            
             const SizedBox(height: 40),
+            
+            //   هدف المستخدم اليومي
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                '${lang.dailyGoal}: ${_backend.dailyGoal} ${lang.steps}',
+                style: const TextStyle(
+                  color: Color(0xFF3DDC97),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            
             ProgressCircle(
               percent: _backend.todayProgress,
               steps: _backend.steps.toDouble(),
@@ -142,14 +166,18 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 16),
             GoalPercentText(percent: _backend.todayProgress),
             const SizedBox(height: 40),
-            EnergyPointsSection(points: _backend.points),
+            
+            //  عرض نقاط اليوم فقط (todayPoints)
+            EnergyPointsSection(points: _backend.todayPoints),
             const SizedBox(height: 30),
+            
             ActionButtons(
-              onChargeNow: () => _pageController.animateToPage(
-                4,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              ),
+              onChargeNow: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChargingPage()),
+                );
+              },
               onLogActivity: () => _pageController.animateToPage(
                 1,
                 duration: const Duration(milliseconds: 300),
@@ -157,6 +185,34 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 30),
+            
+            if (_backend.todayProgress >= 1.0)
+              Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF3DDC97).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFF3DDC97), width: 2),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.emoji_events, color: Color(0xFF3DDC97), size: 32),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        lang.congratulationsGoalComplete,
+                        style: const TextStyle(
+                          color: Color(0xFF3DDC97),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
             AchievementBox(percent: _backend.todayProgress),
           ],
         ),
@@ -175,7 +231,7 @@ class _HomePageState extends State<HomePage> {
       child: BottomNavigationBar(
         backgroundColor: Colors.transparent,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.tealAccent,
+        selectedItemColor: const Color(0xFF3DDC97),
         unselectedItemColor: Colors.grey,
         elevation: 0,
         currentIndex: _currentIndex,

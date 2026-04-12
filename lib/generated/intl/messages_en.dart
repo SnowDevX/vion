@@ -80,12 +80,30 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appSettings": MessageLookupByLibrary.simpleMessage("App Settings"),
     "appTitle": MessageLookupByLibrary.simpleMessage("GrandUs App"),
+    "app_offline": MessageLookupByLibrary.simpleMessage(
+      "Does the app work offline?",
+    ),
+    "app_offline_answer": MessageLookupByLibrary.simpleMessage(
+      "Some features work offline, but an internet connection is required to sync points and data.",
+    ),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "availableBalance": MessageLookupByLibrary.simpleMessage(
       "Available Balance",
     ),
     "backToLogin": MessageLookupByLibrary.simpleMessage("Back to Login"),
+    "batteryChargingComplete": MessageLookupByLibrary.simpleMessage(
+      "Phone charging completed",
+    ),
+    "batteryFull": MessageLookupByLibrary.simpleMessage(
+      "Phone is fully charged",
+    ),
+    "can_points_be_converted": MessageLookupByLibrary.simpleMessage(
+      "Can points be converted into real energy?",
+    ),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cannotChargeBatteryFull": MessageLookupByLibrary.simpleMessage(
+      "Cannot charge because the phone is at 100%",
+    ),
     "carWashDesc": MessageLookupByLibrary.simpleMessage(
       "Voucher provided by our partners",
     ),
@@ -94,9 +112,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Change name and email",
     ),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
+    "chargeFailedPoints": MessageLookupByLibrary.simpleMessage(
+      "Charging completed but failed to deduct points. Please contact support.",
+    ),
     "chargeNow": MessageLookupByLibrary.simpleMessage("Charge Now"),
+    "charged": MessageLookupByLibrary.simpleMessage("Charged"),
+    "charging": MessageLookupByLibrary.simpleMessage("Charging..."),
+    "chargingCompleted": MessageLookupByLibrary.simpleMessage(
+      "Charging Completed",
+    ),
     "chargingStations": MessageLookupByLibrary.simpleMessage(
       "Charging Stations",
+    ),
+    "chargingStopped": MessageLookupByLibrary.simpleMessage("Charging Stopped"),
+    "chargingStoppedMessage": MessageLookupByLibrary.simpleMessage(
+      "Charging stopped.",
     ),
     "chartLabelApril": MessageLookupByLibrary.simpleMessage("Apr"),
     "chartLabelFebruary": MessageLookupByLibrary.simpleMessage("Feb"),
@@ -124,10 +154,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Confirm password is required",
     ),
     "confirmRedeem": MessageLookupByLibrary.simpleMessage("Confirm Redemption"),
+    "confirmRedeemEnd": MessageLookupByLibrary.simpleMessage(" points?"),
     "congratulationsGoalComplete": MessageLookupByLibrary.simpleMessage(
       "Congratulations! Goal Completed",
     ),
     "connected": MessageLookupByLibrary.simpleMessage("Connected"),
+    "contact_support": MessageLookupByLibrary.simpleMessage("Contact Support"),
     "conversionFormula": MessageLookupByLibrary.simpleMessage(
       "1 point/100 = step",
     ),
@@ -135,13 +167,42 @@ class MessageLookup extends MessageLookupByLibrary {
     "convertingCoordinates": MessageLookupByLibrary.simpleMessage(
       "Converting coordinates to address...",
     ),
+    "copied": MessageLookupByLibrary.simpleMessage("Copied!"),
+    "copy": MessageLookupByLibrary.simpleMessage("Copy"),
+    "coupon50": MessageLookupByLibrary.simpleMessage("50 SAR Coupon"),
+    "coupon50Desc": MessageLookupByLibrary.simpleMessage(
+      "50 SAR discount coupon",
+    ),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create Account"),
     "currentPassword": MessageLookupByLibrary.simpleMessage("Current Password"),
     "daily": MessageLookupByLibrary.simpleMessage("Daily"),
+    "dailyGoal": MessageLookupByLibrary.simpleMessage("Daily Goal"),
     "dailySteps": MessageLookupByLibrary.simpleMessage("Daily Steps Goal"),
     "dailyStepsGoal": MessageLookupByLibrary.simpleMessage("Daily Steps Goal"),
+    "data_security": MessageLookupByLibrary.simpleMessage("Is my data secure?"),
+    "data_security_answer": MessageLookupByLibrary.simpleMessage(
+      "Yes, your data is protected using high-security technologies to ensure privacy.",
+    ),
+    "data_security_content": MessageLookupByLibrary.simpleMessage(
+      "We use advanced security measures to protect your data including encryption and two-factor authentication. We are committed to maintaining the confidentiality and security of your information.",
+    ),
+    "data_security_policy": MessageLookupByLibrary.simpleMessage(
+      "Data Security",
+    ),
+    "deductPointsError": MessageLookupByLibrary.simpleMessage(
+      "An error occurred while deducting points. Please try again.",
+    ),
+    "deductPointsFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to deduct points",
+    ),
     "determiningLocation": MessageLookupByLibrary.simpleMessage(
       "Determining your location...",
+    ),
+    "discount10": MessageLookupByLibrary.simpleMessage(
+      "10% discount on charging",
+    ),
+    "discount10Desc": MessageLookupByLibrary.simpleMessage(
+      "10% discount on any charging process",
     ),
     "discount10Percent": MessageLookupByLibrary.simpleMessage(
       "10% Trip Discount",
@@ -169,6 +230,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please enter a valid email address",
     ),
     "errorOccurred": MessageLookupByLibrary.simpleMessage("An error occurred"),
+    "faq": MessageLookupByLibrary.simpleMessage("Frequently Asked Questions"),
     "featureInDevelopment": MessageLookupByLibrary.simpleMessage(
       "Charging stations feature is under development",
     ),
@@ -180,13 +242,46 @@ class MessageLookup extends MessageLookupByLibrary {
     "freeChargingDesc": MessageLookupByLibrary.simpleMessage(
       "Get 30 minutes of free charging",
     ),
+    "freeShipping": MessageLookupByLibrary.simpleMessage("Free Shipping"),
+    "freeShippingDesc": MessageLookupByLibrary.simpleMessage(
+      "Free shipping for one time",
+    ),
     "great": MessageLookupByLibrary.simpleMessage("Great! You\'ve completed"),
     "height": MessageLookupByLibrary.simpleMessage("Height (cm)"),
     "heightCm": MessageLookupByLibrary.simpleMessage("Height (cm)"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
+    "help_support": MessageLookupByLibrary.simpleMessage("Help & Support"),
+    "help_tab": MessageLookupByLibrary.simpleMessage("Help"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "how_are_points_calculated": MessageLookupByLibrary.simpleMessage(
+      "How are points calculated?",
+    ),
+    "how_to_use_points": MessageLookupByLibrary.simpleMessage(
+      "How do I use points to charge my device?",
+    ),
+    "information_collection": MessageLookupByLibrary.simpleMessage(
+      "Information Collection",
+    ),
+    "information_collection_content": MessageLookupByLibrary.simpleMessage(
+      "We collect the following information: name, email, height, weight, daily step count, and energy points. This information is necessary to provide an accurate and personalized physical activity tracking service.",
+    ),
+    "information_sharing": MessageLookupByLibrary.simpleMessage(
+      "Information Sharing",
+    ),
+    "information_sharing_content": MessageLookupByLibrary.simpleMessage(
+      "We do not share your personal information with third parties without your explicit consent or when required by law. All your data remains secure and protected.",
+    ),
+    "information_usage": MessageLookupByLibrary.simpleMessage(
+      "Use of Information",
+    ),
+    "information_usage_content": MessageLookupByLibrary.simpleMessage(
+      "We use your information to personalize your experience, improve app performance, calculate energy points, and provide personalized recommendations to help you achieve your health goals.",
+    ),
     "insufficientPoints": MessageLookupByLibrary.simpleMessage(
       "Insufficient Points",
+    ),
+    "insufficientPointsMessage": MessageLookupByLibrary.simpleMessage(
+      "Your current balance: points\nWalk to earn points first",
     ),
     "insufficientPointsMsg": m2,
     "interactiveMap": MessageLookupByLibrary.simpleMessage("Interactive Map"),
@@ -205,6 +300,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "languageChangedTo": MessageLookupByLibrary.simpleMessage(
       "Language changed to",
     ),
+    "last_update": MessageLookupByLibrary.simpleMessage("Last Updated"),
+    "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "locationError": m3,
     "locationPermissionDenied": MessageLookupByLibrary.simpleMessage(
       "Location permission denied",
@@ -229,6 +326,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "logoutConfirm": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to logout?",
+    ),
+    "max_points_answer": MessageLookupByLibrary.simpleMessage(
+      "Yes, there is a daily maximum for points to ensure fair energy distribution among users.",
+    ),
+    "max_points_per_day": MessageLookupByLibrary.simpleMessage(
+      "Is there a daily maximum for points?",
     ),
     "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "myAccount": MessageLookupByLibrary.simpleMessage("My Account"),
@@ -265,6 +368,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordsNotMatch": MessageLookupByLibrary.simpleMessage(
       "Passwords do not match",
     ),
+    "phone": MessageLookupByLibrary.simpleMessage("Phone Number"),
+    "phoneBattery": MessageLookupByLibrary.simpleMessage("Phone Battery"),
+    "phoneChargedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Phone charged successfully",
+    ),
     "pleaseEnterEmail": MessageLookupByLibrary.simpleMessage(
       "Please enter your email",
     ),
@@ -272,11 +380,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "points": MessageLookupByLibrary.simpleMessage("points"),
     "pointsCount": MessageLookupByLibrary.simpleMessage("156 points ✓"),
     "pointsEarned": MessageLookupByLibrary.simpleMessage("Points Earned"),
+    "pointsRequired": MessageLookupByLibrary.simpleMessage("Points Required"),
     "pointsSpent": MessageLookupByLibrary.simpleMessage("Points Spent"),
+    "pointsUsed": MessageLookupByLibrary.simpleMessage("Points Used"),
+    "pointsUsedLabel": MessageLookupByLibrary.simpleMessage("Points used:"),
+    "points_calculation_answer": MessageLookupByLibrary.simpleMessage(
+      "Points are calculated based on the number of steps you take daily, where every 100 steps is converted into 1 energy point within the app.",
+    ),
+    "points_conversion_answer": MessageLookupByLibrary.simpleMessage(
+      "Yes, points are linked to the energy generated from smart tiles and can be used to charge devices or light up areas.",
+    ),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage(
       "Privacy & Terms of Use",
     ),
+    "privacy_policy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
+    "privacy_tab": MessageLookupByLibrary.simpleMessage("Privacy"),
     "profileHeader": MessageLookupByLibrary.simpleMessage("Profile"),
+    "readyToCharge": MessageLookupByLibrary.simpleMessage("Ready to Charge"),
+    "reason": MessageLookupByLibrary.simpleMessage("Reason:"),
     "receiveAlertsAndUpdates": MessageLookupByLibrary.simpleMessage(
       "Receive alerts and updates",
     ),
@@ -285,11 +406,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "redeemError": MessageLookupByLibrary.simpleMessage(
       "An error occurred during redemption",
     ),
+    "redeemFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to redeem reward. Check your balance.",
+    ),
+    "redeemReward": MessageLookupByLibrary.simpleMessage("Redeem Reward"),
     "redeemSuccess": m6,
+    "redeemSuccessEnd": MessageLookupByLibrary.simpleMessage("!"),
     "redeemYourPoints": MessageLookupByLibrary.simpleMessage(
       "Redeem your points for exclusive rewards",
     ),
     "refreshLocation": MessageLookupByLibrary.simpleMessage("Refresh Location"),
+    "remainingPoints": MessageLookupByLibrary.simpleMessage("Remaining Points"),
     "replaceFirst": MessageLookupByLibrary.simpleMessage("Replace First"),
     "resetError": MessageLookupByLibrary.simpleMessage(
       "An error occurred while sending the reset link",
@@ -303,10 +430,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "savethechanges": MessageLookupByLibrary.simpleMessage("Save the changes"),
     "sendResetLink": MessageLookupByLibrary.simpleMessage("Send Reset Link"),
+    "startCharging": MessageLookupByLibrary.simpleMessage("Start Charging"),
     "steps": MessageLookupByLibrary.simpleMessage("Steps"),
+    "steps_not_counted": MessageLookupByLibrary.simpleMessage(
+      "What should I do if my steps are not counted?",
+    ),
+    "steps_not_counted_answer": MessageLookupByLibrary.simpleMessage(
+      "Make sure you have enabled motion tracking permissions on your device. If the problem persists, you can contact support.",
+    ),
+    "stopCharging": MessageLookupByLibrary.simpleMessage("Stop Charging"),
     "supportPolicies": MessageLookupByLibrary.simpleMessage(
       "Support & Policies",
     ),
+    "support_email": MessageLookupByLibrary.simpleMessage(
+      "Vion.project2026@gmail.com",
+    ),
+    "support_phone": MessageLookupByLibrary.simpleMessage("966xxxxxxxx+"),
     "totalEnergy": MessageLookupByLibrary.simpleMessage("Total Energy"),
     "totalSteps": MessageLookupByLibrary.simpleMessage("Total\nSteps"),
     "transactionLog": MessageLookupByLibrary.simpleMessage(
@@ -328,15 +467,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateCurrentPassword": MessageLookupByLibrary.simpleMessage(
       "Update current password",
     ),
+    "use_points_answer": MessageLookupByLibrary.simpleMessage(
+      "You can use points by selecting the charging option within the app and connecting your device to the smart tile area.",
+    ),
     "userNotFound": MessageLookupByLibrary.simpleMessage(
       "No account registered with this email",
+    ),
+    "walkToEarnPoints": MessageLookupByLibrary.simpleMessage(
+      "Walk to earn points first",
     ),
     "weekly": MessageLookupByLibrary.simpleMessage("Weekly"),
     "weight": MessageLookupByLibrary.simpleMessage("Weight (kg)"),
     "weightKg": MessageLookupByLibrary.simpleMessage("Weight (kg)"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome Back"),
+    "yourBalance": MessageLookupByLibrary.simpleMessage("Your Balance"),
     "yourCurrentLocation": MessageLookupByLibrary.simpleMessage(
       "Your Current Location",
+    ),
+    "your_rights": MessageLookupByLibrary.simpleMessage("Your Rights"),
+    "your_rights_content": MessageLookupByLibrary.simpleMessage(
+      "You have the right to access, correct, or delete your personal data at any time. You can contact the support team to request this.",
     ),
   };
 }

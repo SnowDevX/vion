@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
 
                     const SizedBox(height: 40),
+                    
                     // Email or Username
                     CustomTextField(
                       controller: emailController,
@@ -107,13 +108,41 @@ class _LoginPageState extends State<LoginPage> {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
 
-                            await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                  email: Myemail.trim(),
-                                  password: Mypassword.trim(),
-                                );
-                            print("USER LOGGED IN");
-                            Navigator.pushReplacementNamed(context, '/home');
+                            try {
+                              await FirebaseAuth.instance
+                                  .signInWithEmailAndPassword(
+                                    email: Myemail.trim(),
+                                    password: Mypassword.trim(),
+                                  );
+                              
+                              print(" USER LOGGED IN SUCCESSFULLY");
+                              
+                              
+                            } on FirebaseAuthException catch (e) {
+                              String errorMessage = 'حدث خطأ في تسجيل الدخول';
+                              
+                              if (e.code == 'user-not-found') {
+                                errorMessage = 'لا يوجد مستخدم بهذا البريد الإلكتروني';
+                              } else if (e.code == 'wrong-password') {
+                                errorMessage = 'كلمة المرور غير صحيحة';
+                              } else if (e.code == 'invalid-email') {
+                                errorMessage = 'بريد إلكتروني غير صالح';
+                              }
+                              
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(errorMessage),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('حدث خطأ: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           }
                         },
                         child: Text(
@@ -150,6 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                             lang.noAccount, 
                             style: const TextStyle(color: Colors.white),
                           ),
+                          const SizedBox(width: 4),
                           Text(
                             lang.join, 
                             style: const TextStyle(
@@ -168,5 +198,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passController.dispose();
+    super.dispose();
   }
 }

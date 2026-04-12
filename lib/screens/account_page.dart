@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:grandustionapp/generated/l10n.dart';
 import 'package:grandustionapp/providers/language_provider.dart';
+import 'package:grandustionapp/screens/help_and_privacy/help_support_page.dart';
+import 'package:grandustionapp/screens/help_and_privacy/privacy_policy_page.dart';
 import 'package:provider/provider.dart';
-import 'package:grandustionapp/services/account_backend.dart'; // ✅ إضافة
+import 'package:grandustionapp/services/account_backend.dart';
+import 'package:grandustionapp/services/home_backend.dart';  
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -12,9 +15,10 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final AccountBackend _backend = AccountBackend(); // ✅ الباك إند
+  final AccountBackend _backend = AccountBackend();
+  final HomeBackend _homeBackend = HomeBackend();  
 
-  // بيانات المستخدم
+  // Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
@@ -23,12 +27,8 @@ class _AccountPageState extends State<AccountPage> {
 
   bool _notificationsEnabled = true;
   bool _isLoading = true;
-  
-  // ✅ بيانات المستخدم
   int _userPoints = 0;
   String? _photoURL;
-  String _userName = '';
-  String _userEmail = '';
 
   @override
   void initState() {
@@ -38,17 +38,19 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
-  // ✅ تحميل البيانات من الباك إند
   Future<void> _loadUserData() async {
     if (!mounted) return;
-
     setState(() => _isLoading = true);
 
+    //  جلب بيانات الحساب
     var result = await _backend.loadUserData();
     
+    //  جلب totalPoints من HomeBackend
+    await _homeBackend.loadUserStats();
+    final totalPoints = _homeBackend.totalPoints;
+
     if (result['success'] && mounted) {
       var data = result['data'];
-      
       setState(() {
         _nameController.text = data['name'];
         _emailController.text = data['email'];
@@ -56,10 +58,8 @@ class _AccountPageState extends State<AccountPage> {
         _weightController.text = data['weight'].toString();
         _stepsGoalController.text = data['dailyStepsGoal'].toString();
         _notificationsEnabled = data['notifications'];
-        _userPoints = data['points']; // ✅ النقاط هنا
+        _userPoints = totalPoints;
         _photoURL = data['photoURL'];
-        _userName = data['name'];
-        _userEmail = data['email'];
         _isLoading = false;
       });
     } else {
@@ -67,7 +67,6 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // ✅ حفظ التغييرات
   Future<void> _saveProfileChanges() async {
     var result = await _backend.saveProfileChanges(
       name: _nameController.text,
@@ -79,13 +78,12 @@ class _AccountPageState extends State<AccountPage> {
     );
 
     if (result['success'] && mounted) {
-      await _loadUserData(); // إعادة تحميل البيانات
-      
+      await _loadUserData();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("تم حفظ التغييرات بنجاح"),
+        const SnackBar(
+          content: Text("تم حفظ التغييرات بنجاح"),
           backgroundColor: Colors.green,
-          duration: const Duration(seconds: 2),
+          duration: Duration(seconds: 2),
         ),
       );
     } else if (mounted) {
@@ -98,7 +96,6 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // ✅ تغيير كلمة المرور
   Future<void> _changePassword(String currentPassword, String newPassword) async {
     var result = await _backend.changePassword(
       currentPassword: currentPassword,
@@ -107,8 +104,8 @@ class _AccountPageState extends State<AccountPage> {
 
     if (result['success'] && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("تم تغيير كلمة المرور بنجاح"),
+        const SnackBar(
+          content: Text("تم تغيير كلمة المرور بنجاح"),
           backgroundColor: Colors.green,
         ),
       );
@@ -122,18 +119,16 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // ✅ تسجيل الخروج
   Future<void> _logout() async {
     var result = await _backend.logout();
 
     if (result['success'] && mounted) {
       Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-      
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("تم تسجيل الخروج بنجاح"),
+        const SnackBar(
+          content: Text("تم تسجيل الخروج بنجاح"),
           backgroundColor: Colors.green,
-          duration: const Duration(seconds: 2),
+          duration: Duration(seconds: 2),
         ),
       );
     } else if (mounted) {
@@ -231,7 +226,7 @@ class _AccountPageState extends State<AccountPage> {
                 const SizedBox(height: 24),
                 _buildAppSettingsSection(context, lang, currentLanguage, isRTL),
                 const SizedBox(height: 24),
-                _buildSupportPoliciesSection(lang),
+                _buildSupportPoliciesSection(lang, isRTL),
                 const SizedBox(height: 40),
                 _buildLogoutButton(lang, isRTL),
               ],
@@ -258,7 +253,6 @@ class _AccountPageState extends State<AccountPage> {
       ),
       child: Row(
         children: [
-          // صورة البروفايل
           Container(
             width: 70,
             height: 70,
@@ -293,7 +287,7 @@ class _AccountPageState extends State<AccountPage> {
                   style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                 ),
                 const SizedBox(height: 12),
-                _buildEnergyPoints(lang), // ✅ النقاط تظهر هنا
+                _buildEnergyPoints(lang),
               ],
             ),
           ),
@@ -484,7 +478,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Widget _buildSupportPoliciesSection(S lang) {
+  Widget _buildSupportPoliciesSection(S lang, bool isRTL) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -502,17 +496,35 @@ class _AccountPageState extends State<AccountPage> {
         _buildSettingsItem(
           icon: Icons.help_outline,
           title: lang.helpSupport,
-          onTap: () {},
-          isRTL: true,
+          onTap: () => _navigateToHelpSupport(context, isRTL),
+          isRTL: isRTL,
         ),
         const SizedBox(height: 12),
         _buildSettingsItem(
           icon: Icons.privacy_tip_outlined,
           title: lang.privacyPolicy,
-          onTap: () {},
-          isRTL: true,
+          onTap: () => _navigateToPrivacyPolicy(context, isRTL),
+          isRTL: isRTL,
         ),
       ],
+    );
+  }
+
+  void _navigateToHelpSupport(BuildContext context, bool isRTL) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HelpSupportPage(isRTL: isRTL),
+      ),
+    );
+  }
+
+  void _navigateToPrivacyPolicy(BuildContext context, bool isRTL) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PrivacyPolicyPage(isRTL: isRTL),
+      ),
     );
   }
 
@@ -656,7 +668,10 @@ class _AccountPageState extends State<AccountPage> {
                 if (subtitle != null)
                   Text(
                     subtitle,
-                    style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 12,
+                    ),
                   ),
               ],
             ),
@@ -779,8 +794,8 @@ class _AccountPageState extends State<AccountPage> {
                   if (newPasswordController.text !=
                       confirmPasswordController.text) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text("كلمات المرور غير متطابقة"),
+                      const SnackBar(
+                        content: Text("كلمات المرور غير متطابقة"),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -789,8 +804,8 @@ class _AccountPageState extends State<AccountPage> {
 
                   if (newPasswordController.text.length < 6) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
+                      const SnackBar(
+                        content: Text(
                           "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
                         ),
                         backgroundColor: Colors.red,

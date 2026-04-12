@@ -1,32 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:grandustionapp/generated/l10n.dart';
-
-// ──────────────────────────────────────────────
-// Dummy data models
-// ──────────────────────────────────────────────
-
-class _Transaction {
-  final IconData icon;
-  final Color iconBg;
-  final String title;
-  final String date;
-  final String points;
-  final bool isPositive;
-
-  const _Transaction({
-    required this.icon,
-    required this.iconBg,
-    required this.title,
-    required this.date,
-    required this.points,
-    required this.isPositive,
-  });
-}
-
-// ──────────────────────────────────────────────
-// Activity / KPI Page
-// ──────────────────────────────────────────────
+import 'package:grandustionapp/services/activity_backend.dart';
 
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key});
@@ -36,96 +11,9 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage> {
-  int _selectedTab = 0; // 0 = daily, 1 = weekly, 2 = monthly
+  final ActivityBackend _backend = ActivityBackend();
+  int _selectedTab = 0;
 
-  // Dummy chart data per tab
-  static const List<List<double>> _chartData = [
-    // daily (7 days)
-    [9500, 7200, 10500, 8000, 6000, 11000, 12500],
-    // weekly (7 weeks)
-    [45000, 52000, 38000, 60000, 55000, 47000, 62000],
-    // monthly (7 months)
-    [180000, 210000, 195000, 220000, 200000, 230000, 250000],
-  ];
-
-  List<List<String>> _getChartLabels(S lang) {
-    return [
-      [
-        lang.chartLabelToday,
-        lang.chartLabelWednesday,
-        lang.chartLabelMonday,
-        lang.chartLabelSunday,
-        lang.chartLabelSaturday,
-        lang.chartLabelFriday,
-        lang.chartLabelThursday,
-      ],
-      [
-        lang.chartLabelWeek('1'),
-        lang.chartLabelWeek('2'),
-        lang.chartLabelWeek('3'),
-        lang.chartLabelWeek('4'),
-        lang.chartLabelWeek('5'),
-        lang.chartLabelWeek('6'),
-        lang.chartLabelWeek('7'),
-      ],
-      [
-        lang.chartLabelJanuary,
-        lang.chartLabelFebruary,
-        lang.chartLabelMarch,
-        lang.chartLabelApril,
-        lang.chartLabelMay,
-        lang.chartLabelJune,
-        lang.chartLabelJuly,
-      ],
-    ];
-  }
-
-  List<_Transaction> _getTransactions(S lang) {
-    return [
-      _Transaction(
-        icon: Icons.directions_walk,
-        iconBg: const Color(0xFF1B5E20),
-        title: lang.txConvertedSteps('5,000'),
-        date: '2025-11-08 14:30',
-        points: '+50',
-        isPositive: true,
-      ),
-      _Transaction(
-        icon: Icons.ev_station,
-        iconBg: const Color(0xFF1B5E20),
-        title: lang.txChargingStation,
-        date: '2025-11-08 12:15',
-        points: '-10',
-        isPositive: false,
-      ),
-      _Transaction(
-        icon: Icons.directions_walk,
-        iconBg: const Color(0xFF1B5E20),
-        title: lang.txConvertedSteps('3,500'),
-        date: '2025-11-07 18:45',
-        points: '+35',
-        isPositive: true,
-      ),
-      _Transaction(
-        icon: Icons.card_giftcard,
-        iconBg: const Color(0xFF1B5E20),
-        title: lang.txRewardRedemption,
-        date: '2025-11-07 10:20',
-        points: '-25',
-        isPositive: false,
-      ),
-      _Transaction(
-        icon: Icons.directions_walk,
-        iconBg: const Color(0xFF1B5E20),
-        title: lang.txConvertedSteps('7,200'),
-        date: '2025-11-06 10:00',
-        points: '+72',
-        isPositive: true,
-      ),
-    ];
-  }
-
-  // ── colours ──
   static const Color _bg = Color(0xFF0F1A17);
   static const Color _card = Color(0xFF182A25);
   static const Color _accent = Color(0xFF3DDC97);
@@ -137,34 +25,128 @@ class _ActivityPageState extends State<ActivityPage> {
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
-      child: Scaffold(
-        backgroundColor: _bg,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildHeader(lang),
-                const SizedBox(height: 20),
-                _buildStatCards(lang),
-                const SizedBox(height: 20),
-                _buildTabBar(lang),
-                const SizedBox(height: 20),
-                _buildChart(lang),
-                const SizedBox(height: 28),
-                _buildTransactionHeader(lang),
-                const SizedBox(height: 12),
-                _buildTransactionList(lang),
-              ],
+      child: StreamBuilder<ActivityDashboardData>(
+        stream: _backend.streamDashboard(),
+        builder: (context, snapshot) {
+          final data = snapshot.data ?? ActivityDashboardData.empty();
+
+          return Scaffold(
+            backgroundColor: _bg,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeader(lang),
+                    const SizedBox(height: 20),
+                    _buildStatCards(lang, data),
+                    const SizedBox(height: 20),
+                    _buildTabBar(lang),
+                    const SizedBox(height: 20),
+                    _buildChart(lang, data),
+                    const SizedBox(height: 28),
+                    _buildTransactionHeader(lang),
+                    const SizedBox(height: 12),
+                    _buildTransactionList(lang, data),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
-  // ── Header ──
+  List<List<String>> _getChartLabels(S lang) {
+    final now = DateTime.now();
+
+    return [
+      List<String>.generate(7, (index) {
+        final date = now.subtract(Duration(days: 6 - index));
+        return '${date.day}/${date.month}';
+      }),
+      [
+        lang.chartLabelWeek('1'),
+        lang.chartLabelWeek('2'),
+        lang.chartLabelWeek('3'),
+        lang.chartLabelWeek('4'),
+        lang.chartLabelWeek('5'),
+        lang.chartLabelWeek('6'),
+        lang.chartLabelWeek('7'),
+      ],
+      List<String>.generate(7, (index) {
+        final month = DateTime(now.year, now.month - (6 - index));
+        return '${month.month}/${month.year % 100}';
+      }),
+    ];
+  }
+
+  List<double> _selectedChart(ActivityDashboardData data) {
+    switch (_selectedTab) {
+      case 1:
+        return data.weeklyChart;
+      case 2:
+        return data.monthlyChart;
+      default:
+        return data.dailyChart;
+    }
+  }
+
+  String _formatStat(int value) {
+    if (value >= 1000) {
+      final compact = value / 1000;
+      return compact >= 100
+          ? '${compact.toStringAsFixed(0)}K'
+          : '${compact.toStringAsFixed(1)}K';
+    }
+    return value.toString();
+  }
+
+  String _formatAxisNumber(double number) {
+    if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(0)}K';
+    }
+    return number.toStringAsFixed(0);
+  }
+
+  String _formatDate(DateTime date) {
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+    return '${date.year}-$month-$day $hour:$minute';
+  }
+
+  String _transactionTitle(ActivityTransaction tx, S lang) {
+    if (tx.type == ActivityTransactionType.steps) {
+      return lang.txConvertedSteps((tx.steps ?? 0).toString());
+    }
+
+    if ((tx.rewardTitle ?? '').isNotEmpty) {
+      return tx.rewardTitle!;
+    }
+
+    return lang.txRewardRedemption;
+  }
+
+  IconData _transactionIcon(ActivityTransaction tx) {
+    switch (tx.type) {
+      case ActivityTransactionType.steps:
+        return Icons.directions_walk;
+      case ActivityTransactionType.reward:
+        return Icons.card_giftcard;
+    }
+  }
+
+  bool _isPositive(ActivityTransaction tx) {
+    return tx.type == ActivityTransactionType.steps;
+  }
+
   Widget _buildHeader(S lang) {
     return Column(
       children: [
@@ -187,15 +169,14 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  // ── 3 Stat Cards ──
-  Widget _buildStatCards(S lang) {
+  Widget _buildStatCards(S lang, ActivityDashboardData data) {
     return Row(
       children: [
-        _statCard(Icons.trending_up, '234K', lang.totalSteps),
+        _statCard(Icons.trending_up, _formatStat(data.totalSteps), lang.totalSteps),
         const SizedBox(width: 10),
-        _statCard(Icons.show_chart, '2,340', lang.pointsEarned),
+        _statCard(Icons.show_chart, _formatStat(data.pointsEarned), lang.pointsEarned),
         const SizedBox(width: 10),
-        _statCard(Icons.bolt, '156', lang.pointsSpent),
+        _statCard(Icons.bolt, _formatStat(data.pointsSpent), lang.pointsSpent),
       ],
     );
   }
@@ -232,7 +213,6 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  // ── Tab bar (daily / weekly / monthly) ──
   Widget _buildTabBar(S lang) {
     final tabs = [lang.daily, lang.weekly, lang.monthly];
     return Container(
@@ -242,11 +222,11 @@ class _ActivityPageState extends State<ActivityPage> {
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
-        children: List.generate(tabs.length, (i) {
-          final selected = _selectedTab == i;
+        children: List.generate(tabs.length, (index) {
+          final selected = _selectedTab == index;
           return Expanded(
             child: GestureDetector(
-              onTap: () => setState(() => _selectedTab = i),
+              onTap: () => setState(() => _selectedTab = index),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -256,7 +236,7 @@ class _ActivityPageState extends State<ActivityPage> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  tabs[i],
+                  tabs[index],
                   style: TextStyle(
                     color: selected ? Colors.black : Colors.white70,
                     fontWeight: FontWeight.bold,
@@ -271,11 +251,11 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  // ── Bar Chart ──
-  Widget _buildChart(S lang) {
-    final data = _chartData[_selectedTab];
+  Widget _buildChart(S lang, ActivityDashboardData dashboard) {
+    final data = _selectedChart(dashboard);
     final labels = _getChartLabels(lang)[_selectedTab];
-    final maxY = data.reduce((a, b) => a > b ? a : b) * 1.25;
+    final maxValue = data.reduce((a, b) => a > b ? a : b);
+    final double maxY = maxValue <= 0 ? 10.0 : maxValue * 1.25;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -328,9 +308,9 @@ class _ActivityPageState extends State<ActivityPage> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 42,
-                        interval: maxY / 4,
+                        interval: (maxY / 4).toDouble(),
                         getTitlesWidget: (value, _) => Text(
-                          _formatNumber(value),
+                          _formatAxisNumber(value),
                           style: const TextStyle(
                             color: Colors.white38,
                             fontSize: 10,
@@ -342,13 +322,15 @@ class _ActivityPageState extends State<ActivityPage> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, _) {
-                          final idx = value.toInt();
-                          if (idx < 0 || idx >= labels.length)
+                          final index = value.toInt();
+                          if (index < 0 || index >= labels.length) {
                             return const SizedBox.shrink();
+                          }
+
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
-                              labels[idx],
+                              labels[index],
                               style: const TextStyle(
                                 color: Colors.white38,
                                 fontSize: 9,
@@ -359,12 +341,12 @@ class _ActivityPageState extends State<ActivityPage> {
                       ),
                     ),
                   ),
-                  barGroups: List.generate(data.length, (i) {
+                  barGroups: List.generate(data.length, (index) {
                     return BarChartGroupData(
-                      x: i,
+                      x: index,
                       barRods: [
                         BarChartRodData(
-                          toY: data[i],
+                          toY: data[index],
                           width: 22,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6),
@@ -387,12 +369,6 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  String _formatNumber(double n) {
-    if (n >= 1000) return '${(n / 1000).toStringAsFixed(0)}K';
-    return n.toStringAsFixed(0);
-  }
-
-  // ── Transaction section header ──
   Widget _buildTransactionHeader(S lang) {
     return Row(
       children: [
@@ -410,15 +386,30 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  // ── Transaction List ──
-  Widget _buildTransactionList(S lang) {
-    final transactions = _getTransactions(lang);
+  Widget _buildTransactionList(S lang, ActivityDashboardData data) {
+    if (data.transactions.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: _card,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Text(
+          lang.activityLogSubtitle,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.white54),
+        ),
+      );
+    }
+
     return Column(
-      children: transactions.map((tx) => _transactionTile(tx, lang)).toList(),
+      children: data.transactions.map((tx) => _transactionTile(tx, lang)).toList(),
     );
   }
 
-  Widget _transactionTile(_Transaction tx, S lang) {
+  Widget _transactionTile(ActivityTransaction tx, S lang) {
+    final isPositive = _isPositive(tx);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -428,24 +419,22 @@ class _ActivityPageState extends State<ActivityPage> {
       ),
       child: Row(
         children: [
-          // Icon
           Container(
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: tx.iconBg,
+              color: const Color(0xFF1B5E20),
               borderRadius: BorderRadius.circular(50),
             ),
-            child: Icon(tx.icon, color: _accent, size: 22),
+            child: Icon(_transactionIcon(tx), color: _accent, size: 22),
           ),
           const SizedBox(width: 12),
-          // Title + date
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  tx.title,
+                  _transactionTitle(tx, lang),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -454,20 +443,19 @@ class _ActivityPageState extends State<ActivityPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  tx.date,
+                  _formatDate(tx.timestamp),
                   style: const TextStyle(color: Colors.white38, fontSize: 12),
                 ),
               ],
             ),
           ),
-          // Points badge
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                tx.points,
+                '${isPositive ? '+' : '-'}${tx.points}',
                 style: TextStyle(
-                  color: tx.isPositive ? _accent : Colors.redAccent,
+                  color: isPositive ? _accent : Colors.redAccent,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -476,7 +464,7 @@ class _ActivityPageState extends State<ActivityPage> {
               Text(
                 lang.pointUnit,
                 style: TextStyle(
-                  color: tx.isPositive
+                  color: isPositive
                       ? _accent.withOpacity(0.7)
                       : Colors.redAccent.withOpacity(0.7),
                   fontSize: 11,

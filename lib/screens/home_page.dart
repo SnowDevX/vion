@@ -4,7 +4,7 @@ import 'package:grandustionapp/screens/charging_stations_page.dart';
 import 'package:grandustionapp/screens/charge_now_page.dart';        
 import 'package:grandustionapp/generated/l10n.dart';
 import 'activity_page.dart';
-import 'rewards_page.dart' ;
+import 'rewards_page.dart';
 import 'package:grandustionapp/components/home_components.dart';
 import 'package:grandustionapp/services/home_backend.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -50,11 +50,11 @@ class _HomePageState extends State<HomePage> {
         _locationPermissionGranted = locationStatus.isGranted;
       });
       
-      print(' النشاط البدني: $_activityPermissionGranted');
-      print(' الموقع: $_locationPermissionGranted');
+      print('✅ النشاط البدني: $_activityPermissionGranted');
+      print('✅ الموقع: $_locationPermissionGranted');
       
     } catch (e) {
-      print(' خطأ في طلب الصلاحيات: $e');
+      print('❌ خطأ في طلب الصلاحيات: $e');
     }
   }
 
@@ -68,13 +68,13 @@ class _HomePageState extends State<HomePage> {
 
       setState(() => _isLoading = false);
     } catch (e) {
-      print(' خطأ في التهيئة: $e');
+      print('❌ خطأ في التهيئة: $e');
       setState(() => _isLoading = false);
     }
   }
 
   void _onStepUpdate(int newSteps) async {
-    print(' onStepUpdate: $newSteps');
+    print('🔥 onStepUpdate: $newSteps');
     
     setState(() {
       _backend.updateProgress(newSteps);
@@ -146,7 +146,6 @@ class _HomePageState extends State<HomePage> {
             const ConnectionStatus(),
             const SizedBox(height: 40),
             
-            //   هدف المستخدم اليومي
             Container(
               margin: const EdgeInsets.only(bottom: 8),
               child: Text(
@@ -167,7 +166,6 @@ class _HomePageState extends State<HomePage> {
             GoalPercentText(percent: _backend.todayProgress),
             const SizedBox(height: 40),
             
-            //  عرض نقاط اليوم فقط (todayPoints)
             EnergyPointsSection(points: _backend.todayPoints),
             const SizedBox(height: 30),
             

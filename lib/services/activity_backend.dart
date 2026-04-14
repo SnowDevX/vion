@@ -73,7 +73,13 @@ class ActivityBackend {
       return ActivityDashboardData.empty();
     }
 
+    // ✅ قراءة من dailySteps و stepsHistory معاً
     final dailySteps = _readDailySteps(data['dailySteps']);
+    final stepsHistory = _readStepsHistory(data['stepsHistory']);
+    
+    // ✅ دمج البيانات من المصدرين
+    final allSteps = {...dailySteps, ...stepsHistory};
+    
     final redeemHistory = _readRedeemHistory(data['redeemHistory']);
 
     final totalSteps = _readInt(data['totalSteps']) > 0
@@ -88,12 +94,12 @@ class ActivityBackend {
         : (pointsEarnedField > 0 ? pointsEarnedField : currentPoints);
     final pointsSpent = redeemHistory.isNotEmpty
         ? redeemHistory.fold<int>(
-      0,
-      (total, item) => total + _readInt(item['points']),
-    )
+            0,
+            (total, item) => total + _readInt(item['points']),
+          )
         : _readInt(data['rewards']);
-    final normalizedDailySteps = dailySteps.isNotEmpty
-        ? dailySteps
+    final normalizedDailySteps = allSteps.isNotEmpty
+        ? allSteps
         : _fallbackDailySteps(_readInt(data['todaySteps']));
 
     return ActivityDashboardData(
@@ -107,7 +113,19 @@ class ActivityBackend {
     );
   }
 
+  // ✅ قراءة dailySteps
   Map<String, int> _readDailySteps(dynamic raw) {
+    if (raw is! Map) {
+      return <String, int>{};
+    }
+
+    return raw.map(
+      (key, value) => MapEntry(key.toString(), _readInt(value)),
+    );
+  }
+
+  // ✅ قراءة stepsHistory (جديدة)
+  Map<String, int> _readStepsHistory(dynamic raw) {
     if (raw is! Map) {
       return <String, int>{};
     }
@@ -197,6 +215,7 @@ class ActivityBackend {
   ) {
     final transactions = <ActivityTransaction>[];
 
+    // ✅ إضافة معاملات الخطوات
     for (final entry in dailySteps.entries) {
       final date = DateTime.tryParse(entry.key);
       if (date == null || entry.value <= 0) {
@@ -207,12 +226,13 @@ class ActivityBackend {
         ActivityTransaction(
           type: ActivityTransactionType.steps,
           timestamp: date,
-          points: (entry.value / 1000).floor() * 10,
+          points: (entry.value / 100).floor(), // ✅ 100 خطوة = 1 نقطة
           steps: entry.value,
         ),
       );
     }
 
+    // ✅ إضافة معاملات المكافآت
     for (final item in redeemHistory) {
       final date = DateTime.tryParse(item['date']?.toString() ?? '') ??
           DateTime.now();

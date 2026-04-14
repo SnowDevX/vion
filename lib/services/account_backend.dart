@@ -7,10 +7,10 @@ class AccountBackend {
 
   User? get currentUser => _auth.currentUser;
   
-  // ✅ الحصول على معرف المستخدم
+  //  الحصول على معرف المستخدم
   String? get _userId => _auth.currentUser?.uid;
 
-  // ✅ التحقق مما إذا كان المستخدم جديداً
+  //  التحقق مما إذا كان المستخدم جديداً
   Future<bool> isNewUser() async {
     try {
       if (_userId == null) return true;
@@ -32,17 +32,17 @@ class AccountBackend {
       
       return true;
     } catch (e) {
-      print('❌ خطأ في التحقق من المستخدم الجديد: $e');
+      print(' خطأ في التحقق من المستخدم الجديد: $e');
       return true;
     }
   }
 
-  // ✅ المستخدم أكمل إعداد الهدف
+  //  المستخدم أكمل إعداد الهدف
   Future<void> markGoalAsCompleted() async {
-    print('✅ المستخدم أكمل إعداد الهدف');
+    print(' المستخدم أكمل إعداد الهدف');
   }
 
-  // ✅ جلب بيانات المستخدم من Firestore
+  //  جلب بيانات المستخدم من Firestore
   Future<Map<String, dynamic>> loadUserData() async {
     try {
       if (_userId == null) {
@@ -70,7 +70,7 @@ class AccountBackend {
             'weight': data['weight'] ?? 0,
             'dailyStepsGoal': data['dailyStepsGoal'] ?? 10000,
             'notifications': data['notifications'] ?? true,
-            'totalPoints': data['totalPoints'] ?? 0,  // ✅ تم التعديل
+            'totalPoints': data['totalPoints'] ?? 0,  
             'photoURL': null,
           },
         };
@@ -82,7 +82,7 @@ class AccountBackend {
         };
       }
     } catch (e) {
-      print('❌ خطأ في تحميل البيانات: $e');
+      print(' خطأ في تحميل البيانات: $e');
       return {
         'success': false,
         'error': e.toString(),
@@ -91,7 +91,7 @@ class AccountBackend {
     }
   }
 
-  // ✅ حفظ التعديلات في Firestore
+  //  حفظ التعديلات في Firestore
   Future<Map<String, dynamic>> saveProfileChanges({
     required String name,
     required String email,
@@ -118,12 +118,12 @@ class AccountBackend {
 
       return {'success': true, 'message': 'تم حفظ التغييرات بنجاح'};
     } catch (e) {
-      print('❌ خطأ في حفظ البيانات: $e');
+      print(' خطأ في حفظ البيانات: $e');
       return {'success': false, 'error': e.toString()};
     }
   }
 
-  // ✅ إنشاء مستخدم جديد في Firestore
+  //  إنشاء مستخدم جديد في Firestore
   Future<void> _createNewUser() async {
     if (_userId == null) return;
     
@@ -143,10 +143,9 @@ class AccountBackend {
       'notifications': true,
       'createdAt': FieldValue.serverTimestamp(),
     });
-    print('✅ تم إنشاء مستند جديد للمستخدم: $_userId');
+    print(' تم إنشاء مستند جديد للمستخدم: $_userId');
   }
 
-  // ✅ بيانات افتراضية
   Map<String, dynamic> _getDefaultUserData() {
     return {
       'name': 'زائر',
@@ -155,12 +154,12 @@ class AccountBackend {
       'weight': 0,
       'dailyStepsGoal': 10000,
       'notifications': true,
-      'totalPoints': 0,  // ✅ تم التعديل
+      'totalPoints': 0,  
       'photoURL': null,
     };
   }
 
-  // ✅ تغيير كلمة المرور
+  //  تغيير كلمة المرور
   Future<Map<String, dynamic>> changePassword({
     required String currentPassword,
     required String newPassword,
@@ -193,19 +192,18 @@ class AccountBackend {
     }
   }
 
-  // ✅ تسجيل الخروج
+  //  تسجيل الخروج
   Future<Map<String, dynamic>> logout() async {
     try {
       await _auth.signOut();
-      print('✅ تم تسجيل الخروج بنجاح');
+      print(' تم تسجيل الخروج بنجاح');
       return {'success': true};
     } catch (e) {
-      print('❌ خطأ في تسجيل الخروج: $e');
+      print(' خطأ في تسجيل الخروج: $e');
       return {'success': false, 'error': e.toString()};
     }
   }
 
-  // ✅ Stream للنقاط
   Stream<int> getPointsStream() {
     if (_userId == null) {
       return Stream.value(0);

@@ -19,12 +19,10 @@ class HomeBackend {
   
   String? get _userId => _auth.currentUser?.uid;
   
-  // ✅ حساب النقاط من الخطوات (100 خطوة = 1 نقطة)
   int _calculatePoints(int steps) {
     return (steps / 100).floor();
   }
   
-  // ✅ الحصول على تاريخ اليوم (تنسيق موحد)
   String get _todayDate {
     final now = DateTime.now();
     final year = now.year;
@@ -33,12 +31,10 @@ class HomeBackend {
     return '$year-$month-$day';
   }
   
-  // ✅ جلب تاريخ اليوم (للوصول من الخارج)
   String getTodayDate() {
     return _todayDate;
   }
   
-  // ✅ جلب آخر تاريخ من Firestore
   Future<String> getLastDateFromFirestore() async {
     if (_userId == null) return '';
     final userDoc = await _firestore.collection('users').doc(_userId).get();
@@ -48,7 +44,6 @@ class HomeBackend {
     return '';
   }
   
-  // ✅ توحيد تنسيق التاريخ (لإصلاح البيانات القديمة)
   String _normalizeDate(String date) {
     if (date.isEmpty) return date;
     final parts = date.split('-');
@@ -61,7 +56,6 @@ class HomeBackend {
     return date;
   }
   
-  // ✅ دالة لتصحيح lastDate في Firestore (شغلها مرة واحدة)
   Future<void> fixLastDate() async {
     if (_userId == null) return;
     
@@ -73,17 +67,16 @@ class HomeBackend {
     final today = _todayDate;
     
     print('========== تصحيح lastDate ==========');
-    print('📅 اليوم الحقيقي: $today');
+    print(' اليوم الحقيقي: $today');
     
     await userDocRef.update({
       'lastDate': today,
     });
     
-    print('✅ تم تحديث lastDate إلى: $today');
+    print(' تم تحديث lastDate إلى: $today');
     print('====================================');
   }
   
-  // ✅ دالة لإعادة تعيين يدوي (للاختبار)
   Future<void> manualReset() async {
     if (_userId == null) return;
     
@@ -101,7 +94,7 @@ class HomeBackend {
         'stepsHistory.$lastDate': currentSteps,
         'dailySteps.$lastDate': currentSteps,
       });
-      print('✅ تم حفظ $currentSteps خطوة في تاريخ $lastDate');
+      print(' تم حفظ $currentSteps خطوة في تاريخ $lastDate');
     }
     
     await userDocRef.update({
@@ -110,11 +103,10 @@ class HomeBackend {
       'todayPoints': 0,
     });
     
-    print('✅ تم إعادة تعيين اليوم إلى: ${_todayDate}');
+    print(' تم إعادة تعيين اليوم إلى: ${_todayDate}');
     print('====================================');
   }
   
-  // ✅ إعادة تعيين قسري
   Future<void> forceReset() async {
     if (_userId == null) return;
     
@@ -130,16 +122,15 @@ class HomeBackend {
     todayPoints = 0;
     todayProgress = 0.0;
     
-    print('✅ تم إعادة تعيين قسري إلى: ${_todayDate}');
+    print(' تم إعادة تعيين قسري إلى: ${_todayDate}');
   }
   
-  // ✅ التحقق من بداية يوم جديد
   Future<void> checkAndResetDailySteps() async {
     if (_userId == null) return;
     
     final String today = _todayDate;
     print('========== التحقق من اليوم الجديد ==========');
-    print('📅 تاريخ اليوم: $today');
+    print(' تاريخ اليوم: $today');
     
     final userDocRef = _firestore.collection('users').doc(_userId);
     final userDoc = await userDocRef.get();
@@ -161,24 +152,22 @@ class HomeBackend {
       lastDate = _normalizeDate(lastDate);
     }
     
-    print('📆 آخر تاريخ مسجل: $lastDate');
-    print('🔍 هل هما مختلفان؟ ${lastDate != today}');
+    print(' آخر تاريخ مسجل: $lastDate');
+    print(' هل هما مختلفان؟ ${lastDate != today}');
     
     if (lastDate.isEmpty || lastDate != today) {
-      print('✅✅✅ يوم جديد - إعادة تعيين البيانات ✅✅✅');
+      print(' يوم جديد - إعادة تعيين البيانات ');
       
       final yesterdaySteps = data['todaySteps'] ?? 0;
       
-      // ✅ حفظ بيانات الأمس فقط (بدون إضافة نقاط إلى totalPoints)
       if (yesterdaySteps > 0 && lastDate.isNotEmpty) {
         await userDocRef.update({
           'stepsHistory.$lastDate': yesterdaySteps,
           'dailySteps.$lastDate': yesterdaySteps,
         });
-        print('   ✅ تم حفظ تاريخ $lastDate: $yesterdaySteps خطوة');
+        print('    تم حفظ تاريخ $lastDate: $yesterdaySteps خطوة');
       }
       
-      // ✅ إعادة تعيين اليوم الحالي فقط (لا نضيف نقاط الأمس إلى totalPoints)
       await userDocRef.update({
         'lastDate': today,
         'todaySteps': 0,
@@ -189,8 +178,8 @@ class HomeBackend {
       todayPoints = 0;
       todayProgress = 0.0;
       
-      print('   ✅ تم إعادة تعيين بيانات اليوم الجديد');
-      print('   📅 اليوم الجديد: $today');
+      print('    تم إعادة تعيين بيانات اليوم الجديد');
+      print('    اليوم الجديد: $today');
       
     } else {
       steps = data['todaySteps'] ?? 0;
@@ -199,7 +188,7 @@ class HomeBackend {
       dailyGoal = data['dailyStepsGoal'] ?? 10000;
       todayProgress = (steps / dailyGoal).clamp(0.0, 1.0);
       
-      print('📊 نفس اليوم - البيانات الحالية:');
+      print(' نفس اليوم - البيانات الحالية:');
       print('   خطوات اليوم: $steps');
       print('   نقاط اليوم: $todayPoints');
       print('   إجمالي النقاط: $totalPoints');
@@ -211,7 +200,6 @@ class HomeBackend {
     print('============================================');
   }
 
-  // ✅ إنشاء مستخدم جديد
   Future<void> _createNewUser() async {
     if (_userId == null) return;
     
@@ -229,10 +217,9 @@ class HomeBackend {
       'dailySteps': {},
       'createdAt': FieldValue.serverTimestamp(),
     });
-    print('✅ تم إنشاء مستند جديد للمستخدم: $_userId');
+    print(' تم إنشاء مستند جديد للمستخدم: $_userId');
   }
 
-  // ✅ حفظ الخطوات
   Future<void> saveStepsLocally(int newSteps) async {
     if (_userId == null) return;
     
@@ -248,7 +235,6 @@ class HomeBackend {
     print('   نقاط اليوم: $newTodayPoints');
   }
 
-  // ✅ بدء مستشعر الخطوات
   void startPedometer(Function(int) onStepUpdate) {
     try {
       print('👟 محاولة بدء مستشعر الخطوات...');
@@ -257,23 +243,22 @@ class HomeBackend {
       
       stepCountStream.listen(
         (StepCount event) {
-          print('👟 مستشعر الخطوات: ${event.steps} خطوة');
+          print(' مستشعر الخطوات: ${event.steps} خطوة');
           onStepUpdate(event.steps);
         },
         onError: (error) {
-          print('❌ خطأ في المستشعر: $error');
+          print(' خطأ في المستشعر: $error');
         },
       );
       
-      print('✅ تم بدء مستشعر الخطوات بنجاح');
+      print(' تم بدء مستشعر الخطوات بنجاح');
       
     } catch (e) {
-      print('❌ فشل بدء المستشعر: $e');
-      print('⚠️ قد يكون الجهاز لا يدعم عداد الخطوات');
+      print(' فشل بدء المستشعر: $e');
+      print(' قد يكون الجهاز لا يدعم عداد الخطوات');
     }
   }
 
-  // ✅ مزامنة الخطوات وتحديث النقاط فوراً
   Future<void> syncStepsToBackend(int steps, {bool isReset = false}) async {
     if (_userId == null) return;
     
@@ -297,19 +282,18 @@ class HomeBackend {
             'totalPoints': totalPoints,
           });
           
-          print('💰 نقاط إضافية: +$pointsDifference');
-          print('💰 إجمالي النقاط الآن: $totalPoints');
+          print(' نقاط إضافية: +$pointsDifference');
+          print(' إجمالي النقاط الآن: $totalPoints');
         }
       }
       
-      print('🔄 مزامنة: خطوات=$steps, نقاط اليوم=$todayPoints, إجمالي=$totalPoints');
+      print(' مزامنة: خطوات=$steps, نقاط اليوم=$todayPoints, إجمالي=$totalPoints');
       
     } catch (e) {
-      print('❌ خطأ في المزامنة: $e');
+      print(' خطأ في المزامنة: $e');
     }
   }
 
-  // ✅ جلب إحصائيات المستخدم
   Future<void> loadUserStats() async {
     if (_userId == null) return;
     
@@ -333,20 +317,18 @@ class HomeBackend {
         print('   إجمالي النقاط: $totalPoints');
       }
     } catch (e) {
-      print('❌ خطأ في جلب البيانات: $e');
+      print(' خطأ في جلب البيانات: $e');
     }
   }
 
-  // ✅ تحديث التقدم
   void updateProgress(int newSteps) {
     steps = newSteps;
     todayPoints = _calculatePoints(newSteps);
     todayProgress = (steps / dailyGoal).clamp(0.0, 1.0);
     
-    print('📈 تحديث التقدم: خطوات=$steps, تقدم=${(todayProgress * 100).toStringAsFixed(1)}%');
+    print(' تحديث التقدم: خطوات=$steps, تقدم=${(todayProgress * 100).toStringAsFixed(1)}%');
   }
   
-  // ✅ دالة لإصلاح التواريخ القديمة
   Future<void> fixDatesInFirestore() async {
     if (_userId == null) return;
     
@@ -356,7 +338,7 @@ class HomeBackend {
     final userDoc = await userDocRef.get();
     
     if (!userDoc.exists) {
-      print('❌ لا يوجد مستند للمستخدم');
+      print(' لا يوجد مستند للمستخدم');
       return;
     }
     
@@ -381,7 +363,7 @@ class HomeBackend {
       'lastDate': normalizedLastDate,
     });
     
-    print('✅ تم إصلاح التواريخ في Firestore');
+    print(' تم إصلاح التواريخ في Firestore');
     print('   lastDate: $lastDate -> $normalizedLastDate');
     print('   stepsHistory: تم تحديث ${stepsHistory.length} تاريخ');
     print('============================================');

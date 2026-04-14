@@ -50,11 +50,11 @@ class _HomePageState extends State<HomePage> {
         _locationPermissionGranted = locationStatus.isGranted;
       });
       
-      print('✅ النشاط البدني: $_activityPermissionGranted');
-      print('✅ الموقع: $_locationPermissionGranted');
+      print(' النشاط البدني: $_activityPermissionGranted');
+      print(' الموقع: $_locationPermissionGranted');
       
     } catch (e) {
-      print('❌ خطأ في طلب الصلاحيات: $e');
+      print(' خطأ في طلب الصلاحيات: $e');
     }
   }
 
@@ -68,13 +68,13 @@ class _HomePageState extends State<HomePage> {
 
       setState(() => _isLoading = false);
     } catch (e) {
-      print('❌ خطأ في التهيئة: $e');
+      print(' خطأ في التهيئة: $e');
       setState(() => _isLoading = false);
     }
   }
 
   void _onStepUpdate(int newSteps) async {
-    print('🔥 onStepUpdate: $newSteps');
+    print(' onStepUpdate: $newSteps');
     
     setState(() {
       _backend.updateProgress(newSteps);
